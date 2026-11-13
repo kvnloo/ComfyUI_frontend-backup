@@ -15,6 +15,10 @@ import { groupHandleMembers } from './edit/groupHandleMembers'
 import { createGroupHandles } from './edit/groupHandles'
 import { nodeHandleMembers } from './edit/nodeHandleMembers'
 import { createSlotHandles } from './edit/slotHandles'
+import { createDocuments } from './events/documents/documents'
+import { createWorkflowHandle } from './events/documents/workflowHandle'
+import { createWorkflowImporters } from './events/documents/workflowImporters'
+import type { WorkflowImporters } from './events/documents/workflowImporters'
 import { createExecutingNode } from './events/executingNode'
 import { isInteracting } from './events/interaction'
 import { createNodeChanges } from './events/nodeChanges'
@@ -48,6 +52,10 @@ export interface ComfyApiServices {
 export interface ComfyApiHost extends Omit<VersionHost, 'publish'> {
   /** The extension through which the host tells the API about node types. */
   readonly nodeTypeHooks: NodeTypeHooks
+  /** Tells packs a workflow finished loading, or an undo or redo restored one. */
+  workflowLoaded(): void
+  /** `found` if it holds a workflow; otherwise what a pack's importer reads from `file`. */
+  importWorkflowFile: WorkflowImporters['importUnreadFile']
 }
 
 /** The published API, the host's side of it, and the edit core every node, slot, link, group and graph edit runs through. */
@@ -93,6 +101,8 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
   const visibleGraph = () => canvas()?.visibleGraph() ?? null
   const moves = createNodeMoves(nodes, canvas)
   const executing = createExecutingNode(nodes, services.getGraph)
+  const documents = createDocuments()
+  const importers = createWorkflowImporters()
 
   const comfy = Object.freeze({
     getApiVersion: () => API_VERSION,
@@ -108,6 +118,14 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
     executingNode: executing.executingNode,
     executionNode: executing.executionNode,
     onExecutingNodeChanged: executing.onExecutingNodeChanged,
+    onWorkflowLoaded: documents.onWorkflowLoaded,
+    onDocumentActivated: documents.onDocumentActivated,
+    onDocumentClosed: documents.onDocumentClosed,
+    workflow: createWorkflowHandle(
+      documents.current,
+      importers,
+      services.getGraph
+    ),
     defs: definitions.defs,
 
     graph: createGraphHandle(
@@ -128,6 +146,8 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
       reapplyTypeColors: definitions.reapplyTypeColors,
       markReady: lifecycle.markReady,
       providePacks: packs.provide,
+      workflowLoaded: documents.workflowLoaded,
+      importWorkflowFile: importers.importUnreadFile,
       endDocument: handles.endDocument,
       beginDocument: handles.beginDocument,
       beforeHistoryRestore: handles.beforeHistoryRestore,
