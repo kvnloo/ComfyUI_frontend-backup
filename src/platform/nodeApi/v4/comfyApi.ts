@@ -20,6 +20,8 @@ import { createWorkflowHandle } from './events/documents/workflowHandle'
 import { createWorkflowImporters } from './events/documents/workflowImporters'
 import type { WorkflowImporters } from './events/documents/workflowImporters'
 import { createExecutingNode } from './events/executingNode'
+import { createQueue } from './events/queue/queueHandle'
+import type { QueueHost } from './events/queue/queueHandle'
 import { isInteracting } from './events/interaction'
 import { createNodeChanges } from './events/nodeChanges'
 import { createNodeMoves } from './events/nodeMoves'
@@ -54,6 +56,8 @@ export interface ComfyApiHost extends Omit<VersionHost, 'publish'> {
   readonly nodeTypeHooks: NodeTypeHooks
   /** Tells packs a workflow finished loading, or an undo or redo restored one. */
   workflowLoaded(): void
+  /** What `queuePrompt` tells the queue. */
+  readonly queue: QueueHost
   /** `found` if it holds a workflow; otherwise what a pack's importer reads from `file`. */
   importWorkflowFile: WorkflowImporters['importUnreadFile']
 }
@@ -103,6 +107,7 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
   const executing = createExecutingNode(nodes, services.getGraph)
   const documents = createDocuments()
   const importers = createWorkflowImporters()
+  const queue = createQueue(nodes)
 
   const comfy = Object.freeze({
     getApiVersion: () => API_VERSION,
@@ -126,6 +131,7 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
       importers,
       services.getGraph
     ),
+    queue: queue.queue,
     defs: definitions.defs,
 
     graph: createGraphHandle(
@@ -147,6 +153,7 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
       markReady: lifecycle.markReady,
       providePacks: packs.provide,
       workflowLoaded: documents.workflowLoaded,
+      queue: queue.host,
       importWorkflowFile: importers.importUnreadFile,
       endDocument: handles.endDocument,
       beginDocument: handles.beginDocument,

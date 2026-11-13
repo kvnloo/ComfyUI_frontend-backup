@@ -1843,6 +1843,7 @@ export class ComfyApp implements IComfyApp {
       })
       this.queueItems.length = 0
       this.processingQueue = false
+      useComfyApiStore().queue.queueSettled()
       return false
     }
     const workspaceIdBeforeAuthentication = teamWorkspaceStore.activeWorkspaceId
@@ -1884,6 +1885,7 @@ export class ComfyApp implements IComfyApp {
       )
       this.queueItems.length = 0
       this.processingQueue = false
+      useComfyApiStore().queue.queueSettled()
       return false
     }
 
@@ -1981,6 +1983,7 @@ export class ComfyApp implements IComfyApp {
             delete api.authToken
             delete api.apiKey
             if (!res.prompt_id) {
+              useComfyApiStore().queue.promptRejected()
               telemetry?.trackExecutionOutcome({
                 startTime,
                 endTime: responseReceivedAt,
@@ -2016,6 +2019,13 @@ export class ComfyApp implements IComfyApp {
                 error
               })
             }
+            if (res.prompt_id) {
+              useComfyApiStore().queue.promptSubmitted(
+                requestId,
+                res.prompt_id,
+                Object.keys(p.output).length
+              )
+            }
             if (executionErrorStore.hasNodeError) {
               if (useSettingStore().get('Comfy.RightSidePanel.ShowErrorsTab')) {
                 executionErrorStore.showErrorOverlay()
@@ -2036,6 +2046,7 @@ export class ComfyApp implements IComfyApp {
             })
             if (error instanceof PromptExecutionError) {
               queueResultOverride = !error.response.node_errors
+              useComfyApiStore().queue.promptRejected()
             }
             const hasPromptNodeErrors =
               error instanceof PromptExecutionError &&
@@ -2162,6 +2173,7 @@ export class ComfyApp implements IComfyApp {
       }
     } finally {
       this.processingQueue = false
+      useComfyApiStore().queue.queueSettled()
     }
     return queueResultOverride ?? !executionErrorStore.lastNodeErrors
   }
