@@ -10,7 +10,8 @@ import type {
   NodeDef,
   NodeDefBuilder,
   NodeHandle,
-  PropertyChangeEvent
+  PropertyChangeEvent,
+  Supplier
 } from '@/platform/nodeApi/v4/types'
 import type { IssuedPack } from '@/platform/nodeApi/v4/packs'
 import { checkedWidgetDef } from '@/platform/nodeApi/v4/widgets/widgetDef'
@@ -54,6 +55,7 @@ export interface HookCallbacks {
     event: DragEvent
   ) => boolean | void | Promise<boolean | void>
   addMenuItem: CheckedMenuItem
+  setSupply: Supplier
 }
 
 export type HookName = keyof HookCallbacks
@@ -72,7 +74,8 @@ export const HOOK_NAMES = [
   'onDoubleClick',
   'onDragOver',
   'onDrop',
-  'addMenuItem'
+  'addMenuItem',
+  'setSupply'
 ] as const satisfies readonly HookName[]
 
 /** The callbacks one extension added to one type, by hook, in the order it added them. */
@@ -102,7 +105,8 @@ export function createNodeDefBuilder(
     onDoubleClick: [],
     onDragOver: [],
     onDrop: [],
-    addMenuItem: []
+    addMenuItem: [],
+    setSupply: []
   }
   let open = true
 
@@ -163,7 +167,8 @@ export function createNodeDefBuilder(
       )
     ),
     addWidget: adder('onCreated', widgetAdder, 'addWidget'),
-    hideWidget: adder('onCreated', widgetHider, 'hideWidget')
+    hideWidget: adder('onCreated', widgetHider, 'hideWidget'),
+    setSupply: hook('setSupply')
   })
 
   return {
