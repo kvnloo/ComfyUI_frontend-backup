@@ -186,7 +186,8 @@ export function createDefRegistry(
     },
     nodeHooks: {
       callbacksOf: dispatch.callbacksOf,
-      demand: (hook) => extensions.demand(hook)
+      demand: (hook) => extensions.demand(hook),
+      deliverTo: dispatch.deliverTo
     }
   }
 }
