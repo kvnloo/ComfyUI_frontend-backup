@@ -1,4 +1,5 @@
 import type { LGraph } from '@/lib/litegraph/src/LGraph'
+import type { FrontendExecution } from '@/utils/executionUtil'
 
 import { createDocumentHandles } from '@/platform/nodeApi/shared/documentHandles'
 import type { VersionHost } from '@/platform/nodeApi/shared/versionHost'
@@ -31,6 +32,7 @@ import { centerOnArea, createGraphView } from './events/view/graphView'
 import { nodeViewMembers } from './events/view/nodeView'
 import { createDefRegistry } from './defs/defRegistry'
 import type { NodeTypeHooks } from './defs/defRegistry'
+import { createFrontendExecution } from './execution/frontendExecution'
 import { createGraphHandle } from './graphHandle'
 import { createGraphScopes } from './graphScopeHandle'
 import { createNodeHandles } from './nodeHandle'
@@ -62,6 +64,8 @@ export interface ComfyApiHost extends Omit<VersionHost, 'publish'> {
   readonly queue: QueueHost
   /** `found` if it holds a workflow; otherwise what a pack's importer reads from `file`. */
   importWorkflowFile: WorkflowImporters['importUnreadFile']
+  /** What the prompt builder asks of the API. */
+  readonly frontendExecution: FrontendExecution
 }
 
 /** The published API, the host's side of it, and the edit core every node, slot, link, group and graph edit runs through. */
@@ -159,6 +163,7 @@ export function createComfyApi(services: ComfyApiServices): ComfyApi {
     host: {
       nodeTypeHooks: definitions.nodeTypeHooks,
       reapplyTypeColors: definitions.reapplyTypeColors,
+      frontendExecution: createFrontendExecution(definitions.resolvers),
       markReady: lifecycle.markReady,
       providePacks: packs.provide,
       workflowLoaded: documents.workflowLoaded,
