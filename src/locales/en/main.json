@@ -1819,7 +1819,8 @@
     "Secrets": "Secrets",
     "Node Library": "Node Library",
     "PointCloud": "Point Cloud",
-    "SkillPacks": "Skill Packs"
+    "SkillPacks": "Skill Packs",
+    "Smart Guides": "Smart Guides"
   },
   "serverConfigItems": {
     "listen": {
