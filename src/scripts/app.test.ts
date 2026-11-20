@@ -2532,7 +2532,7 @@ describe('ComfyApp', () => {
 
         await app.loadGraphData(savedWithValue('loaded'), false)
         await app.loadGraphData(savedWithValue('undone'), false, false, null, {
-          restoresHistory: true
+          restoreHistory: true
         })
 
         expect(mountedWidget().value).toBe('undone')
@@ -2794,7 +2794,7 @@ describe('ComfyApp', () => {
             false,
             null,
             {
-              restoresHistory: true
+              restoreHistory: true
             }
           )
       },
@@ -2850,7 +2850,7 @@ describe('ComfyApp', () => {
         false,
         null,
         {
-          restoresHistory: true
+          restoreHistory: true
         }
       )
 
