@@ -102,6 +102,7 @@
 
       <ComboboxPortal :key="Number(isOpen)">
         <ComboboxContent
+          ref="popup"
           data-capture-wheel="true"
           data-testid="widget-select-default-overlay"
           role="presentation"
@@ -314,6 +315,7 @@ const lockedDirectory = computed(() =>
   widgetId ? folderLocks.get(widgetId)?.directory : localFolderLock.value
 )
 const combobox = useTemplateRef('combobox')
+const popup = useTemplateRef('popup')
 const isOpen = ref(false)
 const retainSearchInput = ref(false)
 const searchInputContainerRef = ref<HTMLElement>()
@@ -431,7 +433,7 @@ function selectOption(option: ComboItem | null) {
 
   modelValue.value = option.rawValue
   useWorkflowStore().activeWorkflow?.changeTracker.captureCanvasState()
-  handleOpenChange(false)
+  void handleOpenChange(false)
 }
 
 function focusSearchInput() {
@@ -443,7 +445,8 @@ function focusSearchInput() {
   return true
 }
 
-function handleOpenChange(open: boolean) {
+async function handleOpenChange(open: boolean) {
+  if (isOpen.value === open) return
   isOpen.value = open
 
   if (open) {
@@ -452,6 +455,16 @@ function handleOpenChange(open: boolean) {
   } else {
     searchQuery.value = ''
     retainSearchInput.value = false
+    const element: unknown = popup.value?.$el
+    if (
+      !(element instanceof Element && element.contains(document.activeElement))
+    )
+      return
+
+    await nextTick()
+    if (!isOpen.value && document.activeElement === document.body) {
+      document.getElementById(inputId)?.focus({ preventScroll: true })
+    }
   }
 }
 </script>
