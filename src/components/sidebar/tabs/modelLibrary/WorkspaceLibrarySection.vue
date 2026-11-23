@@ -26,7 +26,9 @@
           v-if="modelCount > 0"
           variant="badge"
           severity="secondary"
-          aria-hidden="true"
+          :aria-label="
+            $t('sideToolbar.workspaceLibrary.modelCount', modelCount)
+          "
           data-testid="workspace-library-count"
         >
           {{ modelCount }}
@@ -118,7 +120,9 @@ const shelves = computed(() =>
 )
 
 const modelCount = computed(() =>
-  shelves.value.reduce((total, shelf) => total + shelf.names.length, 0)
+  folders.value.every((folder) => library.hasLoaded(folder))
+    ? shelves.value.reduce((total, shelf) => total + shelf.names.length, 0)
+    : 0
 )
 
 const isLoading = computed(

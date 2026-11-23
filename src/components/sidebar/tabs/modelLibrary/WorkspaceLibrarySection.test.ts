@@ -10,6 +10,7 @@ import { startModelLoaderDrag } from '@/composables/node/startModelNodeDragFromA
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import enMessages from '@/locales/en/main.json'
 import { assetService } from '@/platform/assets/services/assetService'
+import { useDeploymentLibraryModelsStore } from '@/platform/workspace/stores/deploymentLibraryModelsStore'
 import { useDeploymentPickStore } from '@/platform/workspace/stores/deploymentPickStore'
 import { useTeamWorkspaceStore } from '@/platform/workspace/stores/teamWorkspaceStore'
 import type { ModelFolder } from '@/stores/modelStore'
@@ -120,7 +121,27 @@ describe('WorkspaceLibrarySection', () => {
         screen.getAllByRole('img', { name: 'Downloads when a job runs' })
       ).toHaveLength(3)
     )
-    expect(screen.getByTestId('workspace-library-count')).toHaveTextContent('3')
+    expect(
+      screen.getByRole('button', { name: 'Workspace library 3 models' })
+    ).toBeInTheDocument()
+  })
+
+  it('shows no count while a folder it counts has not loaded yet', async () => {
+    library.set('loras', ['detail-tweaker.safetensors'])
+    library.set('checkpoints', [
+      'sd_xl_base_1.0.safetensors',
+      'sd_xl_refiner_1.0.safetensors'
+    ])
+    Object.assign(useModelStore(), {
+      modelFolders: [folder('loras'), folder('checkpoints')]
+    })
+    const libraryModels = useDeploymentLibraryModelsStore()
+    libraryModels.refresh('loras')
+    await libraryModels.waitForSettled('loras')
+
+    renderSection()
+
+    expect(screen.queryByTestId('workspace-library-count')).toBeNull()
   })
 
   it('says so when the library is empty', async () => {
