@@ -128,7 +128,9 @@ import { toNodeId } from '@comfyorg/graph-model/nodeId'
 import {
   createTestRootGraph,
   createTestSubgraph,
-  createTestSubgraphNode
+  createTestSubgraphData,
+  createTestSubgraphNode,
+  enableSubgraphNodeCreation
 } from '@/lib/litegraph/src/subgraph/__fixtures__/subgraphHelpers'
 import { useWidgetValueStore } from '@/stores/widgetValueStore'
 import { extractFilesFromDragEvent } from '@/utils/eventUtils'
@@ -2062,6 +2064,31 @@ describe('ComfyApp', () => {
         expect(kept.isDeleted).toBe(false)
         expect(comfy.graph.node(kept.id)).toBe(kept)
         expect(kept.type).toBe('HandleProbe')
+      })
+
+      it('gives back the same handle to a node in a subgraph when undo restores the subgraph node that redo removed again', async () => {
+        const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        onTestFinished(enableSubgraphNodeCreation(app.rootGraph))
+        const subgraph = app.rootGraph.createSubgraph(createTestSubgraphData())
+        const interior = LiteGraph.createNode('HandleProbe')
+        assert(interior)
+        subgraph.add(interior)
+        const placement = createTestSubgraphNode(subgraph, { id: 100 })
+        app.rootGraph.add(placement)
+        const tracker = historyOfTheOpenWorkflow()
+        const kept = comfy.graph.subgraphs()[0]?.node(String(interior.id))
+        assert(kept)
+        expect(comfy.graph.node(String(placement.id))?.remove()).toBe(true)
+
+        await tracker.undo()
+        await tracker.redo()
+        expect(app.rootGraph.subgraphs.has(subgraph.id)).toBe(false)
+        expect(kept.isDeleted).toBe(true)
+        await tracker.undo()
+
+        expect(kept.isDeleted).toBe(false)
+        expect(comfy.graph.subgraphs()[0]?.node(String(interior.id))).toBe(kept)
       })
 
       it('retires the handle to a node of a replacement load when undo goes back across that load', async () => {
