@@ -9,7 +9,7 @@ import { useApp } from '@/scripts/appInstance'
 import { ChangeTracker } from '@/scripts/changeTracker'
 import { isChangeCaptureSuppressed } from '@/services/changeCaptureSuppression'
 
-import type { CanvasSource } from './canvasSource'
+import type { CanvasSource } from '@/platform/nodeApi/shared/canvasSource'
 import { createComfyApi } from './comfyApi'
 
 /** The app's one V4 node API, and the host's side of it. */
