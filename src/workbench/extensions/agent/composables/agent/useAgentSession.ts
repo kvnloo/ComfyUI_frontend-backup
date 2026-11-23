@@ -332,6 +332,13 @@ const NON_RETRYABLE_REQUEST_STATUSES = new Set([
   400, 401, 403, 404, 405, 409, 410, 422
 ])
 
+/**
+ * Proxy/gateway statuses where the upstream POST may have already persisted the
+ * turn. Application HTTP 500 from `post_thread_message` is excluded: both cloud
+ * and local handlers only return 500 at or before transactional `StartTurn`
+ * persistence, after which follow-up work is best-effort and the route responds
+ * 202.
+ */
 const ALWAYS_UNCERTAIN_SEND_STATUSES = new Set([502, 504])
 
 function isUncertainGatewaySendStatus(error: unknown): boolean {
@@ -2185,7 +2192,8 @@ export function useAgentSession(deps: AgentSessionDeps) {
       origin.blankChatId,
       ack.thread_id,
       toTurnId(ack.message_id),
-      scope
+      scope,
+      pending?.createdOrder
     )
   }
 
@@ -3668,10 +3676,6 @@ export function useAgentSession(deps: AgentSessionDeps) {
    * the unanswered ask, so re-deliver it through the store, which routes it to
    * the same transport the lost frame would have reached, and mirror the one
    * other thing the socket branch does with an ask.
-   *
-   * Reported at `error` only after a reconnect, where the frame really is
-   * gone. A hydrate's poll can instead be racing a broadcast the server had
-   * not published when its history fetch went out, so that reads as a warning.
    */
   function restoreMissingApproval(
     turn: LiveTurn,
@@ -3717,7 +3721,7 @@ export function useAgentSession(deps: AgentSessionDeps) {
   ): void {
     const lostFrame = cause === 'reconnect' || connection === 'dropped'
     if (!lostFrame) {
-      sendRestoredApprovalReport(turn, askId, cause, 'warning')
+      sendRestoredApprovalReport(turn, askId, cause)
       return
     }
     const key = lateAskReportKey(turn.threadId, askId)
@@ -3727,7 +3731,7 @@ export function useAgentSession(deps: AgentSessionDeps) {
       messageId: turn.messageId,
       timer: setTimeout(() => {
         lateAskReports.delete(key)
-        sendRestoredApprovalReport(turn, askId, cause, 'error')
+        sendRestoredApprovalReport(turn, askId, cause)
       }, LATE_ASK_FRAME_GRACE_MS)
     })
   }
@@ -3780,15 +3784,15 @@ export function useAgentSession(deps: AgentSessionDeps) {
   function sendRestoredApprovalReport(
     turn: LiveTurn,
     askId: string,
-    cause: RecoveryCause,
-    level: 'error' | 'warning'
+    cause: RecoveryCause
   ): void {
     reportError(
       new Error('Agent approval ask was missing from the panel when polled'),
       {
         surface: 'agent',
         errorType: 'failure_delivering_agent_approval_ask',
-        level,
+        level: 'warning',
+        fingerprint: ['agent-approval-ask-restored'],
         tags: {
           feature_area: 'agent',
           operation: 'recovery',
