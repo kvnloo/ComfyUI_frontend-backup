@@ -37,10 +37,9 @@ follow-up for a command interface.
 1. Every edit the API makes runs through an edit runner (`edit/editRunner.ts`)
    as one undo step. Node, slot, link and group edits go through the edit
    core, `edit/edits.ts`, on the core's runner. Widget edits
-   (`widgets/widgetEdits.ts`, ADR-EXTENSIONS-NODE-API-0072 decision 5) run on
-   a second runner, made over the same history, and `workflow.setExtra`
-   (ADR-EXTENSIONS-NODE-API-0075) goes through the core's `batch`; neither is
-   a core function. The runner keeps no state of its own (nesting is the change
+   (`widgets/widgetEdits.ts`, ADR-EXTENSIONS-NODE-API-0072 decision 5) and
+   `workflow.setExtra` (ADR-EXTENSIONS-NODE-API-0075) run on a second runner,
+   made over the same history; neither is a core function. The runner keeps no state of its own (nesting is the change
    tracker's), so the two runners make the same steps as one would.
    Packs reach the core through handle methods (`node.setTitle`, `slot.modify`,
    `inputs.reorder`, `graph.add`, `graph.batch`, `group.setBounds`); the core

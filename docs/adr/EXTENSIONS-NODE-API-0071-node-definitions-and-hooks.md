@@ -395,7 +395,8 @@ registered, so `extend` cannot depend on the order.
     tested: the canvas paths in `defs/hostPaths.test.ts` and `app.test.ts`,
     Vue nodes by mounting `LGraphNode.vue` on a real graph and canvas
     (`LGraphNode.nodeApi.test.ts`, which also holds the Vue side of the
-    badge claim). Neither Vue test asserts a limit a Nodes 2.0 fix removes.
+    badge, widget-height and node-move claims). No Vue test asserts a limit a
+    Nodes 2.0 fix removes.
     `onDragOver` is asked from the node's `onDragOver`, which both renderers
     call while a browser drag is over the node (the editor's `dragover`
     listener in `app.ts` and Vue nodes' `LGraphNode.vue`), with the node's
