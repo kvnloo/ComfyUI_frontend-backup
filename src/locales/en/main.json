@@ -4402,6 +4402,7 @@
     "buildTakesMinutes": "This takes a few minutes. You can keep working.",
     "readyNew": "{deployment} is ready",
     "switch": "Switch",
+    "switchListingUnavailable": "Your deployments didn't load. Try again from Run on.",
     "readyUpdate": "{deployment} now runs v{version}.",
     "readyUpdateReload": "{deployment} now runs v{version}. Reload to use its nodes.",
     "reload": "Reload",

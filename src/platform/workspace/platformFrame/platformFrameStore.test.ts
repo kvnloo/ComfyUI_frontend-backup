@@ -561,7 +561,7 @@ describe('following a build after the dialog closes', () => {
   function readyNewDeployment() {
     const pickStore = useDeploymentPickStore()
     pickStore.state = listing([RUNNING])
-    vi.spyOn(pickStore, 'load').mockImplementation(async () => {
+    const load = vi.spyOn(pickStore, 'load').mockImplementation(async () => {
       pickStore.state = listing([RUNNING, NEW_DEPLOYMENT])
     })
     const store = usePlatformFrameStore()
@@ -578,7 +578,7 @@ describe('following a build after the dialog closes', () => {
       frame
     )
     const [toast] = useToast().toasts
-    return { pickStore, toast }
+    return { pickStore, toast, load }
   }
 
   it('switches to the deployment Platform made from Switch, though the build started without its id', async () => {
@@ -592,6 +592,42 @@ describe('following a build after the dialog closes', () => {
     await vi.waitFor(() =>
       expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
     )
+  })
+
+  it('says the deployments did not load, rather than switch nothing, when the listing is unavailable', async () => {
+    const { pickStore, toast, load } = readyNewDeployment()
+    load.mockImplementation(async () => {
+      pickStore.state = { phase: 'hidden' }
+    })
+    useToast().dismissAll()
+
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(useToast().toasts).toEqual([
+        expect.objectContaining({
+          kind: 'error',
+          title: 'Could not switch',
+          description: "Your deployments didn't load. Try again from Run on."
+        })
+      ])
+    )
+  })
+
+  it('opens Run on to start the new deployment, rather than pick it, once it has stopped', async () => {
+    const { pickStore, toast, load } = readyNewDeployment()
+    load.mockImplementation(async () => {
+      pickStore.state = listing([
+        RUNNING,
+        { ...NEW_DEPLOYMENT, status: 'stopped', can_start: true }
+      ])
+    })
+    const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
+
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() => expect(pickStore.switcherOpenAsks).toBe(1))
+    expect(pick).not.toHaveBeenCalled()
   })
 
   it('switches to the new deployment the listing shows when a resumed build lands while the page is quiet', async () => {

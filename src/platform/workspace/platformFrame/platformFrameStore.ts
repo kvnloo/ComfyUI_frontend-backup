@@ -2,7 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
 
 import type { CustomDeploymentEntry } from '@comfyorg/telemetry/types'
+import { useToast } from '@/components/ui/toast/toastStore'
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
+import { t } from '@/i18n'
 import { isCloud } from '@/platform/distribution/types'
 import { skipLeavePromptOnce } from '@/platform/workflow/management/leavePrompt'
 import { switchToDeployment } from '@/platform/workspace/composables/useDeploymentSwitchGuard'
@@ -238,14 +240,34 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
     reloadForDeploymentSwitch(() => void pickStore.load())
   }
 
+  async function switchToBuilt(done: FollowedBuild) {
+    const pickStore = useDeploymentPickStore()
+    await pickStore.load()
+    if (pickStore.isSwitching) return
+    if (pickStore.state.phase !== 'ready') {
+      useToast().error(t('deploymentSwitcher.failedToSwitch'), {
+        description: t('platformFrame.switchListingUnavailable'),
+        duration: 8000
+      })
+      return
+    }
+    const target = pickStore.deployments.find(
+      (deployment) => deployment.deployment_id === done.deploymentId
+    )
+    if (target?.status !== 'ready') {
+      pickStore.requestSwitcherOpen()
+      return
+    }
+    await switchToDeployment(target.deployment_id, done.deploymentName)
+  }
+
   function finishReady(done: FollowedBuild, id: ToastId) {
     const pickStore = useDeploymentPickStore()
     const runsHere =
       done.kind === 'update' &&
       pickStore.bootDeployment?.deployment_id === done.deploymentId
     noticeBuildReady(done, id, {
-      switchTo: () =>
-        void switchToDeployment(done.deploymentId, done.deploymentName),
+      switchTo: () => void switchToBuilt(done),
       reload: runsHere
         ? () => void reloadOntoVersion(done.deploymentName)
         : null
