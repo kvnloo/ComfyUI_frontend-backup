@@ -1512,7 +1512,8 @@ export class ComfyApp implements IComfyApp {
     let resourceScanLoadCompleted = false
     try {
       try {
-        if (!restoreHistory) useComfyApiStore().beginDocument()
+        if (restoreHistory) useComfyApiStore().beforeHistoryRestore(graphData)
+        else useComfyApiStore().beginDocument()
         try {
           this.rootGraph.configure(graphData as ISerialisedGraph, undefined, {
             preserveMountedNodeSizes: restoreHistory
