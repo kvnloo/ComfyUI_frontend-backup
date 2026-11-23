@@ -22,6 +22,7 @@ import type { ExecutedWsMessage } from '@comfyorg/api-client/executionTypes'
 import {
   canCaptureCanvas,
   isCanvasCaptureBlocked,
+  isCanvasOwner,
   resetCanvasTrackerForTest
 } from '@/platform/workflow/core/canvasTrackerOwnership'
 import { useDialogStore } from '@/stores/dialogStore'
@@ -423,10 +424,23 @@ export class ChangeTracker implements WorkflowChangeTracker {
    * an undo or redo across it a load too.
    */
   reset(state?: ComfyWorkflowJSON) {
-    if (state) {
-      if (!this._restoringState) this.markLoadBoundary(state)
-      this.activeState = clone(state)
-    }
+    if (state && !this._restoringState) this.markLoadBoundary(state)
+    this.adopt(state)
+  }
+
+  /**
+   * Takes the graph as the end of a load leaves it, with what its
+   * `afterLoadGraph` hooks changed, as the loaded state: no undo step.
+   *
+   * @internal Not part of the public extension API.
+   */
+  adoptLoadedGraph() {
+    if (!isActiveTracker(this) || !isCanvasOwner(this)) return
+    this.adopt(useApp().rootGraph.serialize() as ComfyWorkflowJSON)
+  }
+
+  private adopt(state?: ComfyWorkflowJSON) {
+    if (state) this.activeState = clone(state)
     if (this._restoringState) return
 
     this.initialState = clone(this.activeState)

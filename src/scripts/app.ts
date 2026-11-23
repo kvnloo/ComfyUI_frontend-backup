@@ -1691,11 +1691,13 @@ export class ComfyApp implements IComfyApp {
         await cancelReplacedLoad()
         return undefined
       }
-      useComfyApiStore().workflowLoaded()
-      ChangeTracker.isLoadingGraph = false
       // Capture the workflow this load activated before the asset-scan awaits
       // below can hand control back and let the user switch to another one.
       activatedWorkflow = useWorkflowStore().activeWorkflow ?? undefined
+      activatedWorkflow?.changeTracker.adoptLoadedGraph()
+      if (restoreHistory) useComfyApiStore().workflowLoaded()
+      ChangeTracker.isLoadingGraph = false
+      if (!restoreHistory) useComfyApiStore().workflowLoaded()
 
       // Drop missing-node entries whose enclosing subgraph is
       // muted/bypassed. The initial JSON scan only checks each node's
@@ -2415,6 +2417,8 @@ export class ComfyApp implements IComfyApp {
             this.rootGraph.serialize() as unknown as ComfyWorkflowJSON
           )
           await useExtensionService().invokeExtensionsAsync('afterLoadGraph')
+          useWorkflowStore().activeWorkflow?.changeTracker.adoptLoadedGraph()
+          releaseCaptureSuppression?.()
           useComfyApiStore().workflowLoaded()
           return
         } catch (error) {
@@ -2777,6 +2781,8 @@ export class ComfyApp implements IComfyApp {
         this.rootGraph.serialize() as unknown as ComfyWorkflowJSON
       )
       await useExtensionService().invokeExtensionsAsync('afterLoadGraph')
+      useWorkflowStore().activeWorkflow?.changeTracker.adoptLoadedGraph()
+      releaseCaptureSuppression()
       useComfyApiStore().workflowLoaded()
       lifecycleCompleted = true
       if (missingNodeTypes.length) {

@@ -87,6 +87,7 @@ import {
 import Load3dUtils from '@/extensions/core/load3d/Load3dUtils'
 import { getWorkflowDataFromFile } from '@/scripts/metadata/parser'
 import { useComfyApiStore } from '@/platform/nodeApi/v4/comfyApiStore'
+import { bindCanvasTracker } from '@/platform/workflow/core/canvasTrackerOwnership'
 import { createComfyApi } from '@/platform/nodeApi/v4/comfyApi'
 import {
   hostNodeDef,
@@ -2041,11 +2042,16 @@ describe('ComfyApp', () => {
         )
         workflow.changeTracker = tracker
         useWorkflowStore().activeWorkflow = workflow
-        mockWorkflowService.afterLoadNewGraph.mockImplementation(
-          async (_workflow: unknown, state: ComfyWorkflowJSON) =>
-            tracker.reset(state)
+        vi.mocked(useWorkflowStore().getWorkflowByPath).mockReturnValue(
+          workflow
         )
-        return tracker
+        mockWorkflowService.afterLoadNewGraph.mockImplementation(
+          async (_workflow: unknown, state: ComfyWorkflowJSON) => {
+            bindCanvasTracker(tracker)
+            tracker.reset(state)
+          }
+        )
+        return { tracker, workflow }
       }
 
       async function addedProbe(comfy: Comfy): Promise<NodeHandle> {
@@ -2057,7 +2063,7 @@ describe('ComfyApp', () => {
       it('gives back the same handle when undo restores a node that redo removed again', async () => {
         const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
         await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         const kept = await addedProbe(comfy)
         expect(kept.remove()).toBe(true)
         expect(tracker.undoQueue).toHaveLength(2)
@@ -2115,7 +2121,7 @@ describe('ComfyApp', () => {
             LiteGraph.namedValuesRestore = before
           })
           await app.loadGraphData(savedThreeWidgets(), false)
-          const tracker = historyOfTheOpenWorkflow()
+          const { tracker } = historyOfTheOpenWorkflow()
           const node = comfy.graph.node('1')
           assert(node)
           change(node.widgets)
@@ -2223,7 +2229,7 @@ describe('ComfyApp', () => {
         const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
         await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
         showTheRootGraph()
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         const heard: string[] = []
         comfy.onNodeChanged(({ property, to }) =>
           heard.push(`${property} ${String(to)}`)
@@ -2274,7 +2280,7 @@ describe('ComfyApp', () => {
         subgraph.add(interior)
         const placement = createTestSubgraphNode(subgraph, { id: 100 })
         app.rootGraph.add(placement)
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         const kept = comfy.graph.subgraphs()[0]?.node(String(interior.id))
         assert(kept)
         expect(comfy.graph.node(String(placement.id))?.remove()).toBe(true)
@@ -2289,10 +2295,75 @@ describe('ComfyApp', () => {
         expect(comfy.graph.subgraphs()[0]?.node(String(interior.id))).toBe(kept)
       })
 
+      it.for([
+        {
+          format: 'a workflow',
+          load: () => app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        },
+        {
+          format: 'API JSON',
+          load: () =>
+            app.loadApiJson(
+              { '1': { class_type: 'HandleProbe', inputs: {} } },
+              'probe.json'
+            )
+        }
+      ])(
+        'makes an edit a pack makes when told $format loaded the first undo step, marking the workflow modified',
+        async ({ load }) => {
+          const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+          await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+          const { tracker, workflow } = historyOfTheOpenWorkflow()
+          const unsubscribe = comfy.onWorkflowLoaded(() =>
+            comfy.graph.node('1')?.setTitle('Set when loaded')
+          )
+          await load()
+          unsubscribe()
+
+          expect(tracker.undoQueue).toHaveLength(1)
+          expect(workflow.isModified).toBe(true)
+          comfy.graph.node('1')?.setTitle('Edited by the user')
+          await tracker.undo()
+
+          expect(app.rootGraph.getNodeById(toNodeId(1))?.title).toBe(
+            'Set when loaded'
+          )
+          await tracker.undo()
+          expect(app.rootGraph.getNodeById(toNodeId(1))?.title).toBe(
+            'HandleProbe'
+          )
+        }
+      )
+
+      it('keeps what an afterLoadGraph hook changes as part of the loaded workflow, which the next undo does not take back', async () => {
+        const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        const { tracker, workflow } = historyOfTheOpenWorkflow()
+        let hookRunsLeft = 1
+        mockExtensionService.invokeExtensionsAsync.mockImplementation(
+          async (hook) => {
+            const node = app.rootGraph.getNodeById(toNodeId(1))
+            if (hook !== 'afterLoadGraph' || !node || !hookRunsLeft--) return []
+            node.title = 'Set by a hook'
+            return []
+          }
+        )
+        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+
+        expect(tracker.undoQueue).toHaveLength(0)
+        expect(workflow.isModified).toBe(false)
+        comfy.graph.node('1')?.setTitle('Edited by the user')
+        await tracker.undo()
+
+        expect(app.rootGraph.getNodeById(toNodeId(1))?.title).toBe(
+          'Set by a hook'
+        )
+      })
+
       it('retires the handle to a node of a replacement load when undo goes back across that load', async () => {
         const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
         await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         comfy.graph.node('1')?.setTitle('Before the replacement')
         const replacement = workflowWithFixedIdAndOneNode()
         replacement.nodes[0].title = 'Replacement'
@@ -2325,7 +2396,7 @@ describe('ComfyApp', () => {
           builder.onRemoved((node) => removed.push(node))
         )
         await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         const kept = await addedProbe(comfy)
         expect(kept.remove()).toBe(true)
         await tracker.undo()
@@ -2345,7 +2416,7 @@ describe('ComfyApp', () => {
       it('retires the handle when undo goes back to before the node was added, so the node that takes its id next gets another', async () => {
         const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
         await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
-        const tracker = historyOfTheOpenWorkflow()
+        const { tracker } = historyOfTheOpenWorkflow()
         const kept = await addedProbe(comfy)
         expect(kept.remove()).toBe(true)
 
