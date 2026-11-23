@@ -1,4 +1,5 @@
 import type { LGraph } from '@/lib/litegraph/src/LGraph'
+import type { ActionBarButton, TopbarBadge } from '@/types/comfy'
 import type { FrontendExecution } from '@/utils/executionUtil'
 
 import type { CanvasSource } from './canvasSource'
@@ -28,6 +29,10 @@ export type ImportedWorkflow =
 
 /** What one published API version gives the host: every call the host makes into a version. */
 export interface VersionHost {
+  /** The top-bar badges packs have added, for the host to show. */
+  readonly topbarBadges: readonly TopbarBadge[]
+  /** The action-bar buttons packs have added, for the host to show. */
+  readonly actionBarButtons: readonly ActionBarButton[]
   /** Gives the version the canvas, before it is published. */
   provideCanvas(source: CanvasSource): void
   /** Puts the version's window slot in place, before extensions load. */
