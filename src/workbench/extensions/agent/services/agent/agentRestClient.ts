@@ -9,6 +9,7 @@ import type {
 import {
   zAgentUsageStatusResponse,
   zUploadImageResponse,
+  zWorkflowSidebarFileResponse,
   zWorkflowResponse
 } from '@comfyorg/ingest-types/zod'
 import { z } from 'zod'
@@ -96,6 +97,7 @@ type AgentApiOperation =
   | 'get_agent_identity'
   | 'get_usage_status'
   | 'get_cloud_workflow'
+  | 'get_workflow_sidebar_file'
   | 'get_run_mode'
   | 'get_thread_messages'
   | 'hand_off_owner'
@@ -1053,6 +1055,18 @@ export function createAgentRestClient() {
     )
   }
 
+  async function getWorkflowSidebarFile(
+    workflowId: string
+  ): Promise<{ path: string }> {
+    const response = await request(
+      'get_workflow_sidebar_file',
+      `/workflows/${encodeURIComponent(workflowId)}/sidebar-file`,
+      { method: 'GET' },
+      zWorkflowSidebarFileResponse
+    )
+    return { path: response.path }
+  }
+
   async function cancelMessage(
     threadId: string,
     messageId: string
@@ -1125,6 +1139,7 @@ export function createAgentRestClient() {
     putRunMode,
     listCloudWorkflows,
     getCloudWorkflow,
+    getWorkflowSidebarFile,
     cancelMessage,
     answerAsk,
     deleteThread,
