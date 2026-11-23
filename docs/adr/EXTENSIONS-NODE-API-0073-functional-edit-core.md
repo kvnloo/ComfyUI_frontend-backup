@@ -197,12 +197,12 @@ follow-up for a command interface.
     still checks its arguments and returns `undefined`.
     - `comfy.graph` is the graph on screen at each call: the root graph, or
       the subgraph the user opened. Every member that reads or acts on a
-      graph (`id`, `node`, `nodes`, `add`, `links`, `groups`) asks the
-      canvas again each time, so two calls a moment apart reach different
-      graphs if the user opened or left a subgraph in between. A handle it
-      gives does not follow the user: a node, slot or group handle edits its
-      entity in the entity's own graph, on screen or not (decision 2). A pack
-      that needs one graph for
+      graph (`id`, `node`, `nodes`, `add`, `links`, `groups`, the selection
+      and the view) asks the canvas again each time, so two calls a moment
+      apart reach different graphs if the user opened or left a subgraph in
+      between. A handle it gives does not follow the user: a node, slot,
+      widget or group handle edits its entity in the entity's own graph, on
+      screen or not (decision 2). A pack that needs one graph for
       several graph-level calls compares `comfy.graph.id` between them, or
       reaches a particular graph through `root()` and `subgraphs()`.
     - `GraphScopeHandle` has no `add`, `batch` or `version`. No stored pack
@@ -225,9 +225,11 @@ follow-up for a command interface.
       graph on screen alone before, so opening a subgraph changed it, an
       edit off screen did not, and two equal readings could come from two
       graphs.
-    - Every edit through a node, slot, group or graph handle that is
+    - Every edit through a node, slot, widget, group or graph handle that is
       applied advances its graph's counter (a `disconnect` of an unlinked
-      slot, or a call on an entity that is gone, is not applied). The host
+      slot, or a call on an entity that is gone, is not applied), and
+      `workflow.setExtra` advances the root graph's
+      (`workflowExtra.test.ts`). The host
       advances a counter for some of its own changes and not for others:
       nodes and links added or removed, a node collapsed or pinned, and a
       widget value the canvas commits through `BaseWidget.setValue`, as the
