@@ -164,14 +164,14 @@ a reference that is the node object dies on every undo.
       counter it has just rewound gives the next node added the id of a node
       it left out: an `onAdded` that adds a node takes it. So just before it
       configures the graph the host calls `beforeHistoryRestore(state)`, which
-      sets aside each node handle whose node `state` lacks: until the restore
-      finishes it reads only the node object it named, so a removal hook the
-      restore's clear calls still gets that handle and reads its node, while
-      a lookup that finds another node under the id, by a callback or a hook,
-      makes a new handle. `afterHistoryRestore()` then retires one whose id
-      another node took, or which the counter could give again, and puts back
-      the others. A removal hook used to get a new handle there, and the pack's
-      own handle stayed retired after the next undo.
+      sets aside each node and widget handle whose node `state` lacks: until
+      the restore finishes it reads only the object it named, so a removal
+      hook the restore's clear calls still gets that handle and reads its
+      node, while a lookup that finds another node under the id, by a callback
+      or a hook, makes a new handle. `afterHistoryRestore()` then retires one
+      whose id another node took, or which the counter could give again, and
+      puts back the others. A removal hook used to get a new handle there, and
+      the pack's own handle stayed retired after the next undo.
     - The change tracker marks a load `restoreHistory` only when it comes from
       its own undo or redo queue. A state that comes from elsewhere, such as the
       saved workflow of an earlier run that Reuse Parameters restores in Linear
