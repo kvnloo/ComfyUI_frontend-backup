@@ -6,6 +6,8 @@ import { useExtensionService } from '@/platform/extensions/services/extensionSer
 
 import { api } from '@/scripts/api'
 import { useApp } from '@/scripts/appInstance'
+import { ChangeTracker } from '@/scripts/changeTracker'
+import { isChangeCaptureSuppressed } from '@/services/changeCaptureSuppression'
 
 import { createComfyApi } from './comfyApi'
 
@@ -14,6 +16,8 @@ export const useComfyApiStore = defineStore('comfyApiV4', () => {
   const { comfy, host } = createComfyApi({
     getGraph: () => useApp().canvasOrUndefined?.graph ?? null,
     history: () => useWorkflowStore().activeWorkflow?.changeTracker,
+    isLoading: () =>
+      ChangeTracker.isLoadingGraph || isChangeCaptureSuppressed(),
     extensionsUrl: () =>
       new URL(api.fileURL('/extensions/'), window.location.href).href
   })
@@ -36,6 +40,7 @@ export const useComfyApiStore = defineStore('comfyApiV4', () => {
     reapplyTypeColors: host.reapplyTypeColors,
     markReady: host.markReady,
     providePacks: host.providePacks,
+    endDocument: host.endDocument,
     beginDocument: host.beginDocument,
     beforeHistoryRestore: host.beforeHistoryRestore,
     afterHistoryRestore: host.afterHistoryRestore

@@ -1279,6 +1279,7 @@ export class ComfyApp implements IComfyApp {
       const replaceCanvas = useWorkflowService().beforeLoadNewGraph(clean)
       replaceCanvas()
       ChangeTracker.isLoadingGraph = true
+      if (!restoreHistory) useComfyApiStore().endDocument(this.rootGraph)
       useExecutionErrorStore().setActiveGraph(null)
 
       if (skipAssetScans) {
