@@ -47,7 +47,7 @@ export interface LegacyUIApp {
     openSource?: WorkflowOpenSource,
     options?: { initiator?: 'user' }
   ): Promise<void | false>
-  refreshComboInNodes(): Promise<void>
+  refreshComboInNodes(): Promise<boolean>
   openClipspace(): void
   clean(): void
 }
