@@ -175,20 +175,21 @@ describe('usePlatformFrameStore', () => {
     store.open(NEW_DEPLOYMENT_FROM_NODES, 'extensions')
     store.attach(frame)
     receive({ type: 'ready', signedIn: true, userId: 'uid-ana' }, frame)
-    await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(query(store.session?.url ?? '')).toMatchObject({
       step: 'new',
       start: 'nodes'
     })
-    expect(postMessage).toHaveBeenCalledWith(
-      {
-        type: 'workflow',
-        nonce: store.session?.nonce,
-        filename: 'portrait.json',
-        workflow: { nodes: [] }
-      },
-      PLATFORM
+    await vi.waitFor(() =>
+      expect(postMessage).toHaveBeenCalledWith(
+        {
+          type: 'workflow',
+          nonce: store.session?.nonce,
+          filename: 'portrait.json',
+          workflow: { nodes: [] }
+        },
+        PLATFORM
+      )
     )
   })
 
