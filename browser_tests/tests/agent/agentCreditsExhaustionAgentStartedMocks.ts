@@ -8,6 +8,7 @@ import {
   agentThreadPage,
   agentThreadSummary
 } from '@e2e/fixtures/data/agent/agentThreadList'
+import { mockAgentSavedWorkflowSidebarFile } from '@e2e/fixtures/helpers/agentSavedWorkflowSidebarFile'
 import { jsonRoute } from '@e2e/fixtures/utils/jsonRoute'
 import { WORKFLOW_ID, agentTest } from '@e2e/tests/agent/agentPanelMocks'
 
@@ -71,14 +72,20 @@ export const test = agentTest.extend<{
   exhaustedRestoredThread: [
     async ({ comfyPage, agentBilling, threadSeed }, use) => {
       const { page } = comfyPage
-      await page.route('**/api/workflows**', (route) =>
-        route.fulfill(
+      await page.route('**/api/workflows**', (route) => {
+        if (new URL(route.request().url()).pathname !== '/api/workflows')
+          return route.fallback()
+        return route.fulfill(
           jsonRoute({
             data: [{ id: WORKFLOW_ID, name: WORKFLOW_NAME }],
             pagination: { offset: 0, limit: 100, total: 1, has_more: false }
           })
         )
-      )
+      })
+      await mockAgentSavedWorkflowSidebarFile(page, WORKFLOW_ID, {
+        savedName: () => WORKFLOW_NAME,
+        savedContent: () => '{}'
+      })
       await page.route('**/api/userdata?*', (route) => {
         const dir = new URL(route.request().url()).searchParams.get('dir')
         if (dir !== 'workflows') return route.fallback()
