@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '@testing-library/vue'
+import { render, screen, waitFor } from '@testing-library/vue'
 import { fromPartial } from '@total-typescript/shoehorn'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createI18n } from 'vue-i18n'
@@ -99,6 +99,28 @@ describe('WorkspaceLibrarySection', () => {
     expect(assetService.getWorkspaceLibraryModels).not.toHaveBeenCalledWith(
       'configs'
     )
+  })
+
+  it('marks each model as one that downloads when a job runs and counts them in the header', async () => {
+    library.set('loras', [
+      'detail-tweaker.safetensors',
+      'portrait-detail.safetensors'
+    ])
+    Object.assign(useModelStore(), {
+      modelFolders: [folder('loras'), folder('checkpoints')]
+    })
+    library.set('checkpoints', ['sd_xl_base_1.0.safetensors'])
+    const { user } = renderSection()
+    expect(screen.queryByTestId('workspace-library-count')).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Workspace library' }))
+
+    await waitFor(() =>
+      expect(
+        screen.getAllByRole('img', { name: 'Downloads when a job runs' })
+      ).toHaveLength(3)
+    )
+    expect(screen.getByTestId('workspace-library-count')).toHaveTextContent('3')
   })
 
   it('says so when the library is empty', async () => {

@@ -1076,7 +1076,8 @@
     "workspaceLibrary": {
       "title": "Workspace library",
       "explainer": "These models are not in this build. They download when a job runs.",
-      "empty": "No models in your workspace library."
+      "empty": "No models in your workspace library.",
+      "downloadsOnRun": "Downloads when a job runs"
     },
     "searchResultsCapped": "Showing the first {limit} matches. Refine your search to see more specific results.",
     "downloads": "Downloads",
@@ -4318,6 +4319,8 @@
       "missingModels": "{count} missing model | {count} missing models",
       "andMore": "{names}, and {count} more",
       "titleNoneRunIt": "Create a deployment to run this workflow on Comfy Cloud",
+      "titleNoneRunItCustomBuild": "Create a Custom Build to run this workflow on Comfy Cloud",
+      "createCustomBuild": "Create a custom build",
       "noneRunIt": "No deployment in this workspace has all of these nodes.",
       "switchBody": "Comfy Cloud is missing these. Switch to a deployment that has them and keep working from there.",
       "switch": "Switch"
@@ -4397,8 +4400,8 @@
     "deploying": "Deploying {deployment}",
     "buildStep": "step {step} of {of}",
     "buildTakesMinutes": "This takes a few minutes. You can keep working.",
-    "readyNew": "{deployment} is ready. Choose it under Run on.",
-    "openRunOn": "Open Run on",
+    "readyNew": "{deployment} is ready",
+    "switch": "Switch",
     "readyUpdate": "{deployment} now runs v{version}.",
     "readyUpdateReload": "{deployment} now runs v{version}. Reload to use its nodes.",
     "reload": "Reload",

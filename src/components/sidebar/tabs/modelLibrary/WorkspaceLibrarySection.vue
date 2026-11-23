@@ -22,6 +22,15 @@
           aria-hidden="true"
         />
         {{ $t('sideToolbar.workspaceLibrary.title') }}
+        <Badge
+          v-if="modelCount > 0"
+          variant="badge"
+          severity="secondary"
+          aria-hidden="true"
+          data-testid="workspace-library-count"
+        >
+          {{ modelCount }}
+        </Badge>
       </Button>
       <Button
         variant="muted-textonly"
@@ -49,16 +58,26 @@
           {{ shelf.folder }}
         </h3>
         <ul class="m-0 list-none p-0">
-          <li v-for="name in shelf.names" :key="name">
+          <li
+            v-for="name in shelf.names"
+            :key="name"
+            class="flex items-center gap-1"
+          >
             <Button
               variant="textonly"
               size="sm"
-              class="w-full justify-start font-normal"
+              class="min-w-0 flex-1 justify-start font-normal"
               :title="name"
               @click="place(shelf.folder, name)"
             >
               <span class="min-w-0 truncate">{{ name }}</span>
             </Button>
+            <i
+              role="img"
+              :aria-label="$t('sideToolbar.workspaceLibrary.downloadsOnRun')"
+              :title="$t('sideToolbar.workspaceLibrary.downloadsOnRun')"
+              class="icon-[lucide--cloud-download] size-3.5 text-muted-foreground"
+            />
           </li>
         </ul>
       </div>
@@ -70,6 +89,7 @@
 import { cn } from '@comfyorg/tailwind-utils'
 import { computed, onScopeDispose, ref, useId, watch } from 'vue'
 
+import Badge from '@comfyorg/design-system/badge/Badge'
 import Button from '@comfyorg/design-system/button/Button'
 import { startModelLoaderDrag } from '@/composables/node/startModelNodeDragFromAsset'
 import {
@@ -95,6 +115,10 @@ const shelves = computed(() =>
   folders.value
     .map((folder) => ({ folder, names: library.namesIn(folder) }))
     .filter((shelf) => shelf.names.length > 0)
+)
+
+const modelCount = computed(() =>
+  shelves.value.reduce((total, shelf) => total + shelf.names.length, 0)
 )
 
 const isLoading = computed(

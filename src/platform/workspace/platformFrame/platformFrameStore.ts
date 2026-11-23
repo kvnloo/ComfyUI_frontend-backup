@@ -5,6 +5,7 @@ import type { CustomDeploymentEntry } from '@comfyorg/telemetry/types'
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import { isCloud } from '@/platform/distribution/types'
 import { skipLeavePromptOnce } from '@/platform/workflow/management/leavePrompt'
+import { switchToDeployment } from '@/platform/workspace/composables/useDeploymentSwitchGuard'
 import { confirmUnsavedWorkBeforeSwitch } from '@/platform/workspace/confirmUnsavedWorkBeforeSwitch'
 import { reloadForDeploymentSwitch } from '@/platform/workspace/deploymentSwitchReload'
 import {
@@ -240,7 +241,8 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
       done.kind === 'update' &&
       pickStore.bootDeployment?.deployment_id === done.deploymentId
     noticeBuildReady(done, id, {
-      openRunOn: pickStore.requestSwitcherOpen,
+      switchTo: () =>
+        void switchToDeployment(done.deploymentId, done.deploymentName),
       reload: runsHere
         ? () => void reloadOntoVersion(done.deploymentName)
         : null

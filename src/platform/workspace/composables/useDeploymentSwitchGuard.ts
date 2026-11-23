@@ -1,10 +1,37 @@
 import { storeToRefs } from 'pinia'
 
+import { useToast } from '@/components/ui/toast/toastStore'
+import { t } from '@/i18n'
 import { skipLeavePromptOnce } from '@/platform/workflow/management/leavePrompt'
 import { useDeploymentLabels } from '@/platform/workspace/composables/useDeploymentLabels'
 import { confirmUnsavedWorkBeforeSwitch } from '@/platform/workspace/confirmUnsavedWorkBeforeSwitch'
 import { reloadForDeploymentSwitch } from '@/platform/workspace/deploymentSwitchReload'
 import { useDeploymentPickStore } from '@/platform/workspace/stores/deploymentPickStore'
+
+/** Starts a switch whose reload skips the leave prompt; a refusal keeps it. */
+async function withoutLeavePrompt(
+  start: () => Promise<string | null>
+): Promise<string | null> {
+  const keepLeavePrompt = skipLeavePromptOnce()
+  const refusal = await start()
+  if (!useDeploymentPickStore().isSwitching) keepLeavePrompt()
+  return refusal
+}
+
+export async function switchToDeployment(
+  deploymentId: string | null,
+  label: string
+): Promise<void> {
+  if (!(await confirmUnsavedWorkBeforeSwitch(label))) return
+  const refusal = await withoutLeavePrompt(() =>
+    useDeploymentPickStore().pick(deploymentId)
+  )
+  if (refusal === null) return
+  useToast().error(t('deploymentSwitcher.failedToSwitch'), {
+    description: refusal,
+    duration: 8000
+  })
+}
 
 /** What every deployment switch goes through before the page reloads. */
 export function useDeploymentSwitchGuard() {
@@ -19,16 +46,6 @@ export function useDeploymentSwitchGuard() {
         (deployment) => deployment.deployment_id === deploymentId
       ) ?? null
     )
-  }
-
-  /** Starts a switch whose reload skips the leave prompt; a refusal keeps it. */
-  async function withoutLeavePrompt(
-    start: () => Promise<string | null>
-  ): Promise<string | null> {
-    const keepLeavePrompt = skipLeavePromptOnce()
-    const refusal = await start()
-    if (!isSwitching.value) keepLeavePrompt()
-    return refusal
   }
 
   /** Reloads onto where this browser runs now, once unsaved work is settled. */

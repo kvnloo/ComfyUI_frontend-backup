@@ -24,6 +24,7 @@ import {
   usePlatformFrameStore
 } from './platformFrameStore'
 import type { PlatformFrameRequest } from './platformFrameUrl'
+import { NEW_DEPLOYMENT_FROM_NODES } from './platformFrameWaysIn'
 
 const env = vi.hoisted(() => ({
   cloud: true,
@@ -165,6 +166,30 @@ describe('usePlatformFrameStore', () => {
       workflow: { nodes: [] }
     })
     expect(captureOpenWorkflow).toHaveBeenCalledOnce()
+  })
+
+  it('hands the open workflow to the page when Extensions opens it on Custom nodes', async () => {
+    const store = usePlatformFrameStore()
+    const { frame, postMessage } = framedWindow()
+
+    store.open(NEW_DEPLOYMENT_FROM_NODES, 'extensions')
+    store.attach(frame)
+    receive({ type: 'ready', signedIn: true, userId: 'uid-ana' }, frame)
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(query(store.session?.url ?? '')).toMatchObject({
+      step: 'new',
+      start: 'nodes'
+    })
+    expect(postMessage).toHaveBeenCalledWith(
+      {
+        type: 'workflow',
+        nonce: store.session?.nonce,
+        filename: 'portrait.json',
+        workflow: { nodes: [] }
+      },
+      PLATFORM
+    )
   })
 
   it('gives each session a fresh nonce Platform accepts', () => {
@@ -515,6 +540,64 @@ describe('following a build after the dialog closes', () => {
 
     expect(toastTitles()).toEqual(['portrait-upscale now runs v2.'])
     expect(useReleaseNoticeStore().claim('r-2')).toBe(false)
+  })
+
+  function readyNewDeployment() {
+    const pickStore = useDeploymentPickStore()
+    pickStore.state = listing([RUNNING])
+    vi.spyOn(pickStore, 'load').mockResolvedValue()
+    const store = usePlatformFrameStore()
+    const { frame } = framedWindow()
+    store.open({ step: 'new', startAtNodes: true }, 'extensions')
+    store.attach(frame)
+    receive(
+      {
+        ...started,
+        kind: 'new',
+        buildId: 'b-9',
+        releaseId: 'r-9',
+        version: 1,
+        deploymentId: 'dep-9'
+      },
+      frame
+    )
+    receive(
+      { type: 'deployment-ready', deploymentId: 'dep-9', releaseId: 'r-9' },
+      frame
+    )
+    const [toast] = useToast().toasts
+    return { pickStore, toast }
+  }
+
+  it('switches to a new deployment from Switch, the way choosing it under Run on does', async () => {
+    const { pickStore, toast } = readyNewDeployment()
+    const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
+
+    expect(toast.title).toBe('portrait-upscale is ready')
+    expect(toast.actions.map((action) => action.label)).toEqual(['Switch'])
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
+    )
+  })
+
+  it('says so when the switch to the new deployment is refused', async () => {
+    const { pickStore, toast } = readyNewDeployment()
+    vi.spyOn(pickStore, 'pick').mockResolvedValue('Not allowed')
+    useToast().dismissAll()
+
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(useToast().toasts).toEqual([
+        expect.objectContaining({
+          kind: 'error',
+          title: 'Could not switch',
+          description: 'Not allowed'
+        })
+      ])
+    )
   })
 
   it('keeps the build for a reload until it is ready', () => {

@@ -108,7 +108,6 @@ import { useI18n } from 'vue-i18n'
 
 import MenuItem from '@comfyorg/design-system/menu/MenuItem'
 import MenuSeparator from '@comfyorg/design-system/menu/MenuSeparator'
-import { useSettingStore } from '@/platform/settings/settingStore'
 import DeploymentSwitcherBuildAction from '@/platform/workspace/components/DeploymentSwitcherBuildAction.vue'
 import DeploymentSwitcherDefaultMenu from '@/platform/workspace/components/DeploymentSwitcherDefaultMenu.vue'
 import DeploymentSwitcherRow from '@/platform/workspace/components/DeploymentSwitcherRow.vue'
@@ -117,6 +116,7 @@ import { useDeploymentLabels } from '@/platform/workspace/composables/useDeploym
 import type { DeploymentRow } from '@/platform/workspace/composables/useDeploymentRows'
 import { useDeploymentRows } from '@/platform/workspace/composables/useDeploymentRows'
 import { useKeepRowFocus } from '@/platform/workspace/composables/useKeepRowFocus'
+import { switchReloadNote } from '@/platform/workspace/confirmUnsavedWorkBeforeSwitch'
 import type { DeploymentRowAction } from '@/platform/workspace/deploymentStartState'
 import { isInFlight } from '@/platform/workspace/platformFrame/platformFrameBuild'
 import { usePlatformFrameStore } from '@/platform/workspace/platformFrame/platformFrameStore'
@@ -147,7 +147,6 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const settingStore = useSettingStore()
 const {
   deployments,
   pickedDeploymentId,
@@ -214,11 +213,7 @@ const notice = computed(() => {
     : t('deploymentSwitcher.defaultGone')
 })
 
-const switchingNote = computed(() =>
-  settingStore.get('Comfy.Workflow.Persist')
-    ? t('deploymentSwitcher.switchingNote')
-    : t('deploymentSwitcher.switchingNoteWithoutDrafts')
-)
+const switchingNote = computed(switchReloadNote)
 
 function chooseRow(event: Event, row: DeploymentRow) {
   if (row.action === 'pick') {
