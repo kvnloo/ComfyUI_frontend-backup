@@ -41,7 +41,7 @@ import { LGraphEventMode } from '@comfyorg/graph-model/globalEnums'
 import { useFreeTierQuota } from '@/platform/billing/subscription/composables/useFreeTierQuota'
 import { isCloud } from '@/platform/distribution/types'
 import { useKeybindingService } from '@/platform/keybindings/keybindingService'
-import { useComfyApiStore } from '@/platform/nodeApi/v4/comfyApiStore'
+import { useNodeApiHost } from '@/platform/nodeApi/nodeApiHost'
 import { useSettingStore } from '@/platform/settings/settingStore'
 import { useTelemetry } from '@comfyorg/telemetry'
 import { bootstrapTracer } from '@/platform/telemetry/perf/bootstrapTracer'
@@ -1279,7 +1279,7 @@ export class ComfyApp implements IComfyApp {
       const replaceCanvas = useWorkflowService().beforeLoadNewGraph(clean)
       replaceCanvas()
       ChangeTracker.isLoadingGraph = true
-      if (!restoreHistory) useComfyApiStore().endDocument(this.rootGraph)
+      if (!restoreHistory) useNodeApiHost().endDocument(this.rootGraph)
       useExecutionErrorStore().setActiveGraph(null)
 
       if (skipAssetScans) {
@@ -1513,14 +1513,14 @@ export class ComfyApp implements IComfyApp {
     let resourceScanLoadCompleted = false
     try {
       try {
-        if (restoreHistory) useComfyApiStore().beforeHistoryRestore(graphData)
-        else useComfyApiStore().beginDocument()
+        if (restoreHistory) useNodeApiHost().beforeHistoryRestore(graphData)
+        else useNodeApiHost().beginDocument()
         try {
           this.rootGraph.configure(graphData as ISerialisedGraph, undefined, {
             preserveMountedNodeSizes: restoreHistory
           })
         } finally {
-          if (restoreHistory) useComfyApiStore().afterHistoryRestore()
+          if (restoreHistory) useNodeApiHost().afterHistoryRestore()
         }
 
         // Save original renderer version before scaling (it gets modified during scaling)

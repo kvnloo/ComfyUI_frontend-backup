@@ -15,7 +15,7 @@ import type {
 import { downloadBlob } from '@/base/common/downloadUtil'
 import { useErrorHandling } from '@/composables/useErrorHandling'
 import { useSettingStore } from '@/platform/settings/settingStore'
-import { useComfyApiStore } from '@/platform/nodeApi/v4/comfyApiStore'
+import { useNodeApiHost } from '@/platform/nodeApi/nodeApiHost'
 import { useApp } from '@/scripts/appInstance'
 import { uploadFile } from '@/scripts/utils'
 import { useNodeDefStore } from '@/stores/nodeDefStore'
@@ -138,7 +138,7 @@ export const useThemeService = () => {
         dataTypes: nodeDefStore.nodeDataTypes,
         backgroundImage: settingStore.get('Comfy.Canvas.BackgroundImage')
       })
-      useComfyApiStore().reapplyTypeColors()
+      useNodeApiHost().reapplyTypeColors()
       themeStore.activePresetId = id
     } finally {
       requestAnimationFrame(() =>
