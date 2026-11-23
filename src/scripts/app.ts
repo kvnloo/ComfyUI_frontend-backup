@@ -42,7 +42,6 @@ import { useFreeTierQuota } from '@/platform/billing/subscription/composables/us
 import { isCloud } from '@/platform/distribution/types'
 import { useKeybindingService } from '@/platform/keybindings/keybindingService'
 import { useNodeApiHost } from '@/platform/nodeApi/nodeApiHost'
-import { useComfyApiStore } from '@/platform/nodeApi/v4/comfyApiStore'
 import { useSettingStore } from '@/platform/settings/settingStore'
 import { useTelemetry } from '@comfyorg/telemetry'
 import { bootstrapTracer } from '@/platform/telemetry/perf/bootstrapTracer'
@@ -861,7 +860,7 @@ export class ComfyApp implements IComfyApp {
       )) {
         setNodePreviewsByExecutionId(executionId, [blobUrl])
       }
-      useComfyApiStore().deliverPreview(
+      useNodeApiHost().deliverPreview(
         this.rootGraph,
         displayNodeExecutionId,
         blob
@@ -1695,9 +1694,9 @@ export class ComfyApp implements IComfyApp {
       // below can hand control back and let the user switch to another one.
       activatedWorkflow = useWorkflowStore().activeWorkflow ?? undefined
       activatedWorkflow?.changeTracker.adoptLoadedGraph()
-      if (restoreHistory) useComfyApiStore().workflowLoaded()
+      if (restoreHistory) useNodeApiHost().workflowLoaded()
       ChangeTracker.isLoadingGraph = false
-      if (!restoreHistory) useComfyApiStore().workflowLoaded()
+      if (!restoreHistory) useNodeApiHost().workflowLoaded()
 
       // Drop missing-node entries whose enclosing subgraph is
       // muted/bypassed. The initial JSON scan only checks each node's
@@ -1788,7 +1787,7 @@ export class ComfyApp implements IComfyApp {
   async graphToPrompt(graph = this.rootGraph) {
     return graphToPrompt(graph, {
       sortNodes: useSettingStore().get('Comfy.Workflow.SortNodeIdOnSave'),
-      frontendExecution: useComfyApiStore().frontendExecution
+      frontendExecution: useNodeApiHost().frontendExecution
     })
   }
 
@@ -1851,7 +1850,7 @@ export class ComfyApp implements IComfyApp {
       })
       this.queueItems.length = 0
       this.processingQueue = false
-      useComfyApiStore().queue.queueSettled()
+      useNodeApiHost().queue.queueSettled()
       return false
     }
     const workspaceIdBeforeAuthentication = teamWorkspaceStore.activeWorkspaceId
@@ -1893,7 +1892,7 @@ export class ComfyApp implements IComfyApp {
       )
       this.queueItems.length = 0
       this.processingQueue = false
-      useComfyApiStore().queue.queueSettled()
+      useNodeApiHost().queue.queueSettled()
       return false
     }
 
@@ -1991,7 +1990,7 @@ export class ComfyApp implements IComfyApp {
             delete api.authToken
             delete api.apiKey
             if (!res.prompt_id) {
-              useComfyApiStore().queue.promptRejected()
+              useNodeApiHost().queue.promptRejected()
               telemetry?.trackExecutionOutcome({
                 startTime,
                 endTime: responseReceivedAt,
@@ -2028,7 +2027,7 @@ export class ComfyApp implements IComfyApp {
               })
             }
             if (res.prompt_id) {
-              useComfyApiStore().queue.promptSubmitted(
+              useNodeApiHost().queue.promptSubmitted(
                 requestId,
                 res.prompt_id,
                 Object.keys(p.output).length
@@ -2054,7 +2053,7 @@ export class ComfyApp implements IComfyApp {
             })
             if (error instanceof PromptExecutionError) {
               queueResultOverride = !error.response.node_errors
-              useComfyApiStore().queue.promptRejected()
+              useNodeApiHost().queue.promptRejected()
             }
             const hasPromptNodeErrors =
               error instanceof PromptExecutionError &&
@@ -2181,7 +2180,7 @@ export class ComfyApp implements IComfyApp {
       }
     } finally {
       this.processingQueue = false
-      useComfyApiStore().queue.queueSettled()
+      useNodeApiHost().queue.queueSettled()
     }
     return queueResultOverride ?? !executionErrorStore.lastNodeErrors
   }
@@ -2213,7 +2212,7 @@ export class ComfyApp implements IComfyApp {
     let workflowData: Awaited<ReturnType<typeof getWorkflowDataFromFile>>
     try {
       workflowData = await getWorkflowDataFromFile(file)
-      workflowData = await useComfyApiStore().importWorkflowFile(
+      workflowData = await useNodeApiHost().importWorkflowFile(
         file,
         workflowData
       )
@@ -2419,7 +2418,7 @@ export class ComfyApp implements IComfyApp {
           await useExtensionService().invokeExtensionsAsync('afterLoadGraph')
           useWorkflowStore().activeWorkflow?.changeTracker.adoptLoadedGraph()
           releaseCaptureSuppression?.()
-          useComfyApiStore().workflowLoaded()
+          useNodeApiHost().workflowLoaded()
           return
         } catch (error) {
           if (!lifecycle.started) throw error
@@ -2783,7 +2782,7 @@ export class ComfyApp implements IComfyApp {
       await useExtensionService().invokeExtensionsAsync('afterLoadGraph')
       useWorkflowStore().activeWorkflow?.changeTracker.adoptLoadedGraph()
       releaseCaptureSuppression()
-      useComfyApiStore().workflowLoaded()
+      useNodeApiHost().workflowLoaded()
       lifecycleCompleted = true
       if (missingNodeTypes.length) {
         this.showMissingNodesError(missingNodeTypes, options)

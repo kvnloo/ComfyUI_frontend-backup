@@ -1,13 +1,9 @@
 import type { LGraph } from '@/lib/litegraph/src/LGraph'
-import type { FrontendExecution } from '@/utils/executionUtil'
 
 import type { CanvasSource } from '@/platform/nodeApi/shared/canvasSource'
 import { createDocumentHandles } from '@/platform/nodeApi/shared/documentHandles'
 import type { GraphResolver } from '@/platform/nodeApi/shared/documentHandles'
-import type {
-  QueueHost,
-  VersionHost
-} from '@/platform/nodeApi/shared/versionHost'
+import type { VersionHost } from '@/platform/nodeApi/shared/versionHost'
 
 import { API_VERSION, isApiVersionAtLeast } from './apiVersion'
 import { createAppLifecycle } from './appLifecycle'
@@ -24,7 +20,6 @@ import { createDocuments } from './events/documents/documents'
 import { createWorkflowExtra } from './events/documents/workflowExtra'
 import { createWorkflowHandle } from './events/documents/workflowHandle'
 import { createWorkflowImporters } from './events/documents/workflowImporters'
-import type { WorkflowImporters } from './events/documents/workflowImporters'
 import { createExecutingNode } from './events/executingNode'
 import { createQueue } from './events/queue/queueHandle'
 import { isInteracting } from './events/interaction'
@@ -58,20 +53,13 @@ export interface ComfyApiServices {
   extensionsUrl?(): string
 }
 
-/** What the host drives, each call as {@link VersionHost} describes it; the store publishes. A pack never sees this. */
-export interface ComfyApiHost extends Omit<VersionHost, 'publish'> {
+/** What the host drives, each call as {@link VersionHost} describes it; the store publishes and gives the canvas. A pack never sees this. */
+export interface ComfyApiHost extends Omit<
+  VersionHost,
+  'publish' | 'provideCanvas'
+> {
   /** The extension through which the host tells the API about node types. */
   readonly nodeTypeHooks: NodeTypeHooks
-  /** Tells packs a workflow finished loading, or an undo or redo restored one. */
-  workflowLoaded(): void
-  /** What `queuePrompt` tells the queue. */
-  readonly queue: QueueHost
-  /** `found` if it holds a workflow; otherwise what a pack's importer reads from `file`. */
-  importWorkflowFile: WorkflowImporters['importUnreadFile']
-  /** What the prompt builder asks of the API. */
-  readonly frontendExecution: FrontendExecution
-  /** Gives a preview the server sent for the node with `executionId` to packs. */
-  deliverPreview(rootGraph: LGraph, executionId: string, blob: Blob): void
 }
 
 /** The published API, the host's side of it, and the edit core every node, slot, link, group and graph edit runs through. */

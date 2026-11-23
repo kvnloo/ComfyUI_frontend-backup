@@ -1,5 +1,7 @@
 import type { LGraph } from '@/lib/litegraph/src/LGraph'
+import type { FrontendExecution } from '@/utils/executionUtil'
 
+import type { CanvasSource } from './canvasSource'
 import type { RestoredState } from './documentHandles'
 
 /** A V4 pack the backend verified, served at `/extensions/<segment>/`. */
@@ -19,8 +21,15 @@ export interface QueueHost {
   queueSettled(): void
 }
 
+/** A workflow or prompt a pack's importer read from a file. */
+export type ImportedWorkflow =
+  | { readonly workflow: object | string }
+  | { readonly prompt: object | string }
+
 /** What one published API version gives the host: every call the host makes into a version. */
 export interface VersionHost {
+  /** Gives the version the canvas, before it is published. */
+  provideCanvas(source: CanvasSource): void
   /** Puts the version's window slot in place, before extensions load. */
   publish(): void
   /** Tells packs the app is set up. */
@@ -41,6 +50,19 @@ export interface VersionHost {
   beforeHistoryRestore(state: RestoredState): void
   /** Retires each handle whose entity an undo or redo removed. */
   afterHistoryRestore(): void
+  /** Tells packs a workflow finished loading, or an undo or redo restored one. */
+  workflowLoaded(): void
   /** Puts back the colors packs gave their types, after a palette cleared them. */
   reapplyTypeColors(): void
+  /** Gives a preview the server sent for the node with `executionId` to packs. */
+  deliverPreview(rootGraph: LGraph, executionId: string, blob: Blob): void
+  /** What `queuePrompt` tells the queue. */
+  readonly queue: QueueHost
+  /** `found` if it holds a workflow; otherwise what a pack's importer reads from `file`. */
+  importWorkflowFile<TFound extends object | undefined>(
+    file: File,
+    found: TFound
+  ): Promise<TFound | ImportedWorkflow>
+  /** What the prompt builder asks of the version. */
+  readonly frontendExecution: FrontendExecution
 }
