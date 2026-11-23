@@ -1693,10 +1693,12 @@ export class ComfyApp implements IComfyApp {
       // Capture the workflow this load activated before the asset-scan awaits
       // below can hand control back and let the user switch to another one.
       activatedWorkflow = useWorkflowStore().activeWorkflow ?? undefined
+      const isUndoOrRedo =
+        restoreHistory || !!activatedWorkflow?.changeTracker._restoringState
+      if (isUndoOrRedo) useNodeApiHost().workflowLoaded()
       activatedWorkflow?.changeTracker.adoptLoadedGraph()
-      if (restoreHistory) useNodeApiHost().workflowLoaded()
       ChangeTracker.isLoadingGraph = false
-      if (!restoreHistory) useNodeApiHost().workflowLoaded()
+      if (!isUndoOrRedo) useNodeApiHost().workflowLoaded()
 
       // Drop missing-node entries whose enclosing subgraph is
       // muted/bypassed. The initial JSON scan only checks each node's

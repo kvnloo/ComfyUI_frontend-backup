@@ -2307,7 +2307,8 @@ describe('ComfyApp', () => {
               { '1': { class_type: 'HandleProbe', inputs: {} } },
               'probe.json'
             )
-        }
+        },
+        { format: 'an A1111 image', load: () => importA1111ImageWithProbe() }
       ])(
         'makes an edit a pack makes when told $format loaded the first undo step, marking the workflow modified',
         async ({ load }) => {
@@ -2329,36 +2330,90 @@ describe('ComfyApp', () => {
             'Set when loaded'
           )
           await tracker.undo()
-          expect(app.rootGraph.getNodeById(toNodeId(1))?.title).toBe(
-            'HandleProbe'
+          expect(app.rootGraph.getNodeById(toNodeId(1))?.title).not.toBe(
+            'Set when loaded'
           )
+          expect(workflow.isModified).toBe(false)
         }
       )
 
-      it('keeps what an afterLoadGraph hook changes as part of the loaded workflow, which the next undo does not take back', async () => {
-        const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
-        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
-        const { tracker, workflow } = historyOfTheOpenWorkflow()
-        let hookRunsLeft = 1
-        mockExtensionService.invokeExtensionsAsync.mockImplementation(
-          async (hook) => {
-            const node = app.rootGraph.getNodeById(toNodeId(1))
-            if (hook !== 'afterLoadGraph' || !node || !hookRunsLeft--) return []
-            node.title = 'Set by a hook'
-            return []
+      it.for([
+        {
+          format: 'a workflow',
+          load: () => app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        },
+        {
+          format: 'API JSON',
+          load: () =>
+            app.loadApiJson(
+              { '1': { class_type: 'HandleProbe', inputs: {} } },
+              'probe.json'
+            )
+        },
+        { format: 'an A1111 image', load: () => importA1111ImageWithProbe() }
+      ])(
+        'keeps what an afterLoadGraph hook changes when $format loads as part of the loaded workflow, which the next undo does not take back',
+        async ({ load }) => {
+          const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+          await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+          const { tracker, workflow } = historyOfTheOpenWorkflow()
+          let hookRunsLeft = 1
+          mockExtensionService.invokeExtensionsAsync.mockImplementation(
+            async (hook) => {
+              const node = app.rootGraph.nodes.at(0)
+              if (hook !== 'afterLoadGraph' || !node || !hookRunsLeft--)
+                return []
+              node.title = 'Set by a hook'
+              return []
+            }
+          )
+          await load()
+
+          expect(tracker.undoQueue).toHaveLength(0)
+          expect(workflow.isModified).toBe(false)
+          comfy.graph.nodes()[0]?.setTitle('Edited by the user')
+          const restores = vi.spyOn(app, 'loadGraphData')
+          await tracker.undo()
+
+          expect(app.rootGraph.nodes[0]?.title).toBe('Set by a hook')
+          expect(
+            restores.mock.calls.map(
+              ([, , , , options]) => options?.restoreHistory
+            )
+          ).toEqual([true])
+        }
+      )
+
+      it.for(['a history restore', 'an undo across a load'])(
+        'keeps an onWorkflowLoaded edit made during %s in the restored state, so the next undo leaves it and redo is kept',
+        async (kind) => {
+          const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+          await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+          const { tracker } = historyOfTheOpenWorkflow()
+          comfy.graph.node('1')?.setTitle('Edited by the user')
+          if (kind === 'an undo across a load') {
+            const replacement = workflowWithFixedIdAndOneNode()
+            replacement.nodes[0].title = 'Replacement'
+            await app.loadGraphData(replacement, false)
           }
-        )
-        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+          let armed = true
+          comfy.onWorkflowLoaded(() => {
+            if (!armed) return
+            armed = false
+            comfy.graph.node('1')?.setColor('#123456')
+          })
 
-        expect(tracker.undoQueue).toHaveLength(0)
-        expect(workflow.isModified).toBe(false)
-        comfy.graph.node('1')?.setTitle('Edited by the user')
-        await tracker.undo()
+          await tracker.undo()
+          const redoAfterUndo = tracker.redoQueue.length
+          tracker.captureCanvasState()
+          const redoAfterClick = tracker.redoQueue.length
+          comfy.graph.node('1')?.setMode('bypass')
+          await tracker.undo()
 
-        expect(app.rootGraph.getNodeById(toNodeId(1))?.title).toBe(
-          'Set by a hook'
-        )
-      })
+          expect(redoAfterClick).toBe(redoAfterUndo)
+          expect(app.rootGraph.getNodeById(toNodeId(1))?.color).toBe('#123456')
+        }
+      )
 
       it('retires the handle to a node of a replacement load when undo goes back across that load', async () => {
         const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
