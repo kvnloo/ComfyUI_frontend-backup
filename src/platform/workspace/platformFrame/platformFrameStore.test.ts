@@ -542,23 +542,35 @@ describe('following a build after the dialog closes', () => {
     expect(useReleaseNoticeStore().claim('r-2')).toBe(false)
   })
 
+  const NEW_DEPLOYMENT: Deployment = {
+    ...RUNNING,
+    deployment_id: 'dep-9',
+    release_id: 'r-9',
+    build_id: 'b-9'
+  }
+
+  const startedNew = {
+    ...started,
+    kind: 'new',
+    buildId: 'b-9',
+    releaseId: 'r-9',
+    version: 1,
+    deploymentId: ''
+  }
+
   function readyNewDeployment() {
     const pickStore = useDeploymentPickStore()
     pickStore.state = listing([RUNNING])
-    vi.spyOn(pickStore, 'load').mockResolvedValue()
+    vi.spyOn(pickStore, 'load').mockImplementation(async () => {
+      pickStore.state = listing([RUNNING, NEW_DEPLOYMENT])
+    })
     const store = usePlatformFrameStore()
     const { frame } = framedWindow()
     store.open({ step: 'new', startAtNodes: true }, 'extensions')
     store.attach(frame)
+    receive(startedNew, frame)
     receive(
-      {
-        ...started,
-        kind: 'new',
-        buildId: 'b-9',
-        releaseId: 'r-9',
-        version: 1,
-        deploymentId: 'dep-9'
-      },
+      { type: 'deploy-sent', releaseId: 'r-9', deploymentId: 'dep-9' },
       frame
     )
     receive(
@@ -569,12 +581,38 @@ describe('following a build after the dialog closes', () => {
     return { pickStore, toast }
   }
 
-  it('switches to a new deployment from Switch, the way choosing it under Run on does', async () => {
+  it('switches to the deployment Platform made from Switch, though the build started without its id', async () => {
     const { pickStore, toast } = readyNewDeployment()
     const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
 
     expect(toast.title).toBe('portrait-upscale is ready')
     expect(toast.actions.map((action) => action.label)).toEqual(['Switch'])
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
+    )
+  })
+
+  it('switches to the new deployment the listing shows when a resumed build lands while the page is quiet', async () => {
+    vi.useFakeTimers()
+    const pickStore = useDeploymentPickStore()
+    pickStore.state = listing([RUNNING])
+    const load = vi.spyOn(pickStore, 'load').mockResolvedValue()
+    const store = usePlatformFrameStore()
+    const { frame } = framedWindow()
+    store.open({ step: 'new', startAtNodes: true }, 'extensions')
+    store.attach(frame)
+    receive(startedNew, frame)
+    reloadEditor(store)
+    load.mockImplementation(async () => {
+      pickStore.state = listing([RUNNING, NEW_DEPLOYMENT])
+    })
+    const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
+
+    store.resume()
+    await vi.advanceTimersByTimeAsync(PLATFORM_FRAME_RESUME_CHECK_MS)
+    const [toast] = useToast().toasts
     toast.actions[0].onClick()
 
     await vi.waitFor(() =>

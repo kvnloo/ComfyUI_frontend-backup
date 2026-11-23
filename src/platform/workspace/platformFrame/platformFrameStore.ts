@@ -158,10 +158,8 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
     resumeCheck = undefined
   }
 
-  function landedRelease(): boolean {
-    const current = build.value
-    if (!current) return false
-    return useDeploymentPickStore().deployments.some(
+  function landedDeployment(current: FollowedBuild) {
+    return useDeploymentPickStore().deployments.find(
       (deployment) =>
         deployment.release_id === current.releaseId &&
         deployment.status === 'ready' &&
@@ -174,7 +172,12 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
     await useDeploymentPickStore().load()
     const current = build.value
     if (!resumeCheck || !current || buildNotice === undefined) return
-    if (landedRelease()) finishReady(current, buildNotice)
+    const landed = landedDeployment(current)
+    if (landed)
+      finishReady(
+        { ...current, deploymentId: landed.deployment_id },
+        buildNotice
+      )
   }
 
   function checkWhileQuiet() {
