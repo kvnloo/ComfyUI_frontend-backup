@@ -58,6 +58,7 @@ const {
   availableWorkflows = [],
   selectWorkflowReference,
   savingReference = false,
+  derivingWorkflow = false,
   editableWorkflowId,
   activeTab = null,
   visibleTabPath = null,
@@ -98,6 +99,7 @@ const {
     workflow: WorkflowReferenceOption
   ) => Promise<WorkflowReferenceMetadata | undefined>
   savingReference?: boolean
+  derivingWorkflow?: boolean
   editableWorkflowId?: string
   activeTab?: ActiveTab | null
   visibleTabPath?: string | null
@@ -482,6 +484,7 @@ defineExpose({ addAttachment, updateAttachment, removeAttachment })
             :editable-workflow-id
             :has-workflow-target="!workflowDetached && !targetUnavailable"
             :workflow-selecting="savingReference"
+            :deriving-workflow
             :get-mention-nodes
             @focusin="onComposerFocus"
             @send="onComposerSend"
