@@ -4,6 +4,7 @@ import type { User } from 'firebase/auth'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
+import { DEPLOYMENT_LISTING_BACKSTOP_MS } from '@/platform/workspace/api/deploymentListingTimeouts'
 import { captureOpenWorkflow } from '@/platform/workspace/platformWorkflowHandoff'
 import {
   loadedEvent,
@@ -613,6 +614,28 @@ describe('following a build after the dialog closes', () => {
         })
       ])
     )
+  })
+
+  it('gives up on Switch with Could not switch when the listing never answers', async () => {
+    vi.useFakeTimers()
+    const { pickStore, toast, load } = readyNewDeployment()
+    load.mockReturnValue(new Promise<void>(() => {}))
+    const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
+    useToast().dismissAll()
+
+    toast.actions[0].onClick()
+    await vi.advanceTimersByTimeAsync(DEPLOYMENT_LISTING_BACKSTOP_MS - 1)
+    expect(useToast().toasts).toEqual([])
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(useToast().toasts).toEqual([
+      expect.objectContaining({
+        kind: 'error',
+        title: 'Could not switch',
+        description: "Your deployments didn't load. Try again from Run on."
+      })
+    ])
+    expect(pick).not.toHaveBeenCalled()
   })
 
   it('opens Run on to start the new deployment, rather than pick it, once it has stopped', async () => {

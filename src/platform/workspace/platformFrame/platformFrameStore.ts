@@ -6,6 +6,7 @@ import { useToast } from '@/components/ui/toast/toastStore'
 import { useFeatureFlags } from '@/composables/useFeatureFlags'
 import { t } from '@/i18n'
 import { isCloud } from '@/platform/distribution/types'
+import { DEPLOYMENT_LISTING_BACKSTOP_MS } from '@/platform/workspace/api/deploymentListingTimeouts'
 import { skipLeavePromptOnce } from '@/platform/workflow/management/leavePrompt'
 import { switchToDeployment } from '@/platform/workspace/composables/useDeploymentSwitchGuard'
 import { confirmUnsavedWorkBeforeSwitch } from '@/platform/workspace/confirmUnsavedWorkBeforeSwitch'
@@ -243,9 +244,18 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
 
   async function switchToBuilt(done: FollowedBuild) {
     const pickStore = useDeploymentPickStore()
-    await pickStore.load()
+    let backstop: ReturnType<typeof setTimeout> | undefined
+    const loaded = await Promise.race([
+      pickStore.load().then(() => true),
+      new Promise<false>((resolve) => {
+        backstop = setTimeout(
+          () => resolve(false),
+          DEPLOYMENT_LISTING_BACKSTOP_MS
+        )
+      })
+    ]).finally(() => clearTimeout(backstop))
     if (pickStore.isSwitching) return
-    if (pickStore.state.phase !== 'ready') {
+    if (!loaded || pickStore.state.phase !== 'ready') {
       useToast().error(t('deploymentSwitcher.failedToSwitch'), {
         description: t('platformFrame.switchListingUnavailable'),
         duration: 8000
