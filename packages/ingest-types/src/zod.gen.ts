@@ -1820,7 +1820,7 @@ export const zBudgetScopeKind = z.enum([
 ])
 
 /**
- * A budget with its spend in the workspace's current billing period. Amounts come in credits and in micro-USD; a client shows credits as received and never converts.
+ * A budget with its spend in the workspace's current billing period. This is the subscription cycle or, when there is no cycle, the UTC calendar month. Only a workspace whose subscription is unresolved has no budget period. Amounts come in credits and in micro-USD; a client shows credits as received and never converts.
  *
  */
 export const zBudget = z.object({
@@ -1910,7 +1910,8 @@ export const zBudgetCreateRequest = z.object({
 
 export const zBudgetList = z.object({
   auto_top_up_conflict: z.boolean(),
-  budgets: z.array(zBudget)
+  budgets: z.array(zBudget),
+  viewer: z.enum(['owner', 'member']).optional()
 })
 
 export const zBudgetUpdateRequest = z.object({
@@ -2378,9 +2379,12 @@ export const zCccStaffPermissions = z.object({
   display_name: z.string().max(200).optional(),
   updated_at: z.iso.datetime(),
   updated_by: z.string(),
-  version: z.coerce.bigint().gte(BigInt(1)).max(BigInt('9223372036854775807'), {
-    error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
-  })
+  version: z.coerce
+    .bigint()
+    .gte(BigInt(1))
+    .max(BigInt('9223372036854775807'), {
+      error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
+    })
 })
 
 export const zCccStagingMediaUse = z.object({
@@ -6734,9 +6738,10 @@ export const zMediaWorkspaceId = z.string()
 
 /**
  * The project a request acts in. The operations that list it are the
- * ones that read it: they list workflows, runs or assets, or create
- * one. Absent means the workspace's default project, which is how
- * existing clients keep working.
+ * ones that read it: they list workflows, runs or assets, create one,
+ * or pick the deployment a browser runs on. Absent means the
+ * workspace's default project, which is how existing clients keep
+ * working.
  *
  * An operation on one existing workflow, run or asset does not take
  * it: the row's own project decides. Any other operation that creates
@@ -7815,6 +7820,7 @@ export const zGetFeaturesResponse = z.object({
   open_on_cloud_model_upload_enabled: z.boolean().optional(),
   open_on_cloud_use_local_agent_enabled: z.boolean().optional(),
   private_workflow_links_enabled: z.boolean().optional(),
+  server_boot_id: z.string().optional(),
   sso_enabled: z.boolean().optional(),
   stripe_publishable_key: z.string().optional(),
   supports_preview_metadata: z.boolean().optional(),
@@ -9156,9 +9162,12 @@ export const zGetCccPublicCacheAuthorityResponse = z.object({
 })
 
 export const zGetCccRevisionItemPath = z.object({
-  rev: z.coerce.bigint().gte(BigInt(1)).max(BigInt('9223372036854775807'), {
-    error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
-  }),
+  rev: z.coerce
+    .bigint()
+    .gte(BigInt(1))
+    .max(BigInt('9223372036854775807'), {
+      error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
+    }),
   uid: z.uuid()
 })
 
@@ -9653,6 +9662,10 @@ export const zClearWorkspaceDeploymentQuery = z.object({
 export const zClearWorkspaceDeploymentResponse = z.void()
 
 export const zPickWorkspaceDeploymentBody = zPickWorkspaceDeploymentRequest
+
+export const zPickWorkspaceDeploymentHeaders = z.object({
+  'X-Comfy-Project-ID': z.string().optional()
+})
 
 export const zPickWorkspaceDeploymentPath = z.object({
   id: z.string()
