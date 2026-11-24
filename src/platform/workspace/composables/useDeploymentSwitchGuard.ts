@@ -8,7 +8,6 @@ import { confirmUnsavedWorkBeforeSwitch } from '@/platform/workspace/confirmUnsa
 import { reloadForDeploymentSwitch } from '@/platform/workspace/deploymentSwitchReload'
 import { useDeploymentPickStore } from '@/platform/workspace/stores/deploymentPickStore'
 
-/** Starts a switch whose reload skips the leave prompt; a refusal keeps it. */
 async function withoutLeavePrompt(
   start: () => Promise<string | null>
 ): Promise<string | null> {
@@ -39,7 +38,6 @@ export function useDeploymentSwitchGuard() {
   const { deployments, isSwitching } = storeToRefs(store)
   const { deploymentFullLabel, currentLabel } = useDeploymentLabels()
 
-  /** The name the save-before-switch dialog gives the deployment. */
   function targetLabel(deploymentId: string | null): string {
     return deploymentFullLabel(
       deployments.value.find(
@@ -48,7 +46,6 @@ export function useDeploymentSwitchGuard() {
     )
   }
 
-  /** Reloads onto where this browser runs now, once unsaved work is settled. */
   async function reloadOntoCurrent(
     confirm: (
       deployment: string
