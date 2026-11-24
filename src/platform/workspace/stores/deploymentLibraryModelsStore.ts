@@ -111,11 +111,7 @@ export const useDeploymentLibraryModelsStore = defineStore(
       }
     )
 
-    onScopeDispose(
-      assetService.onAssetsChanged(() => {
-        for (const folder of folders.keys()) refresh(folder)
-      })
-    )
+    onScopeDispose(assetService.onAssetsChanged(refreshLoaded))
 
     function folderFor(nodeType: string, widgetName: string) {
       if (!assetService.isAssetBrowserEligible(nodeType, widgetName)) {
@@ -159,6 +155,10 @@ export const useDeploymentLibraryModelsStore = defineStore(
           })
         }
       )
+    }
+
+    function refreshLoaded() {
+      for (const folder of folders.keys()) refresh(folder)
     }
 
     function loaded(folder: string): LibraryFolder | undefined {
@@ -221,7 +221,8 @@ export const useDeploymentLibraryModelsStore = defineStore(
       statusOf,
       hasLoaded,
       waitForSettled,
-      refresh
+      refresh,
+      refreshLoaded
     }
   }
 )
