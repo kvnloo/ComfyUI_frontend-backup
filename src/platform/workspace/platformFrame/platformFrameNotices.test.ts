@@ -45,7 +45,7 @@ const FAILURES = [
   ]
 ] as const
 
-const NO_RELOAD = { switchTo: () => {}, reload: null }
+const NO_RELOAD = { switchTo: async () => {}, reload: null }
 
 function onlyToast() {
   const { toasts } = useToast()

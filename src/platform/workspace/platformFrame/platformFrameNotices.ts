@@ -53,7 +53,7 @@ function finishingLine(build: FollowedBuild): string | undefined {
 }
 
 interface ReadyActions {
-  switchTo: () => void
+  switchTo: () => Promise<void>
   reload: (() => void) | null
 }
 

@@ -352,7 +352,7 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
       done.kind === 'update' &&
       pickStore.bootDeployment?.deployment_id === done.deploymentId
     noticeBuildReady(done, id, {
-      switchTo: () => void switchToBuilt(done),
+      switchTo: () => switchToBuilt(done),
       reload: runsHere
         ? () => void reloadOntoVersion(done.deploymentName)
         : null

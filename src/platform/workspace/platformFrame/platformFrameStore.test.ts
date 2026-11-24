@@ -736,12 +736,9 @@ describe('following a build after the dialog closes', () => {
     })
     const pick = vi.spyOn(pickStore, 'pick')
 
-    toast.actions[0].onClick()
+    await toast.actions[0].onClick()
 
-    await vi.waitFor(() =>
-      expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
-    )
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
     expect(reload).not.toHaveBeenCalled()
   })
 
