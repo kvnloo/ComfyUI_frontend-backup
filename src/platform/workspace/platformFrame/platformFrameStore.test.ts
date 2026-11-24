@@ -701,6 +701,50 @@ describe('following a build after the dialog closes', () => {
     )
   })
 
+  function listingPicking(items: Deployment[], picked: string) {
+    return reduceDeploymentPick(
+      { phase: 'idle' },
+      loadedEvent({
+        builds_visible: true,
+        items,
+        picked_deployment_id: picked
+      })
+    )
+  }
+
+  it('reloads onto the new deployment from Switch when another tab has already picked it', async () => {
+    const reload = vi.fn()
+    vi.stubGlobal('location', { reload })
+    const { pickStore, toast, load } = readyNewDeployment()
+    Object.assign(pickStore, { bootDeployment: RUNNING })
+    load.mockImplementation(async () => {
+      pickStore.state = listingPicking([RUNNING, NEW_DEPLOYMENT], 'dep-9')
+    })
+
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() => expect(reload).toHaveBeenCalledOnce())
+  })
+
+  it('reloads nothing from Switch when this tab already runs on the new deployment', async () => {
+    const reload = vi.fn()
+    vi.stubGlobal('location', { reload })
+    const { pickStore, toast, load } = readyNewDeployment()
+    Object.assign(pickStore, { bootDeployment: NEW_DEPLOYMENT })
+    load.mockImplementation(async () => {
+      pickStore.state = listingPicking([RUNNING, NEW_DEPLOYMENT], 'dep-9')
+    })
+    const pick = vi.spyOn(pickStore, 'pick')
+
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
+    )
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(reload).not.toHaveBeenCalled()
+  })
+
   it('says the deployments did not load, rather than switch nothing, when the listing is unavailable', async () => {
     const { pickStore, toast, load } = readyNewDeployment()
     load.mockImplementation(async () => {

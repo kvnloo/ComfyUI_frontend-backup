@@ -17,6 +17,16 @@ async function withoutLeavePrompt(
   return refusal
 }
 
+function landWhenAlreadyPicked(): void {
+  const store = useDeploymentPickStore()
+  if (store.isSwitching || store.changeSinceBoot === null) return
+  const keepLeavePrompt = skipLeavePromptOnce()
+  reloadForDeploymentSwitch(() => {
+    keepLeavePrompt()
+    void store.load()
+  })
+}
+
 export async function switchToDeployment(
   deploymentId: string | null,
   label: string
@@ -25,7 +35,12 @@ export async function switchToDeployment(
   const refusal = await withoutLeavePrompt(() =>
     useDeploymentPickStore().pick(deploymentId)
   )
-  if (refusal === null) return
+  if (refusal === null) {
+    if (deploymentId === useDeploymentPickStore().pickedDeploymentId) {
+      landWhenAlreadyPicked()
+    }
+    return
+  }
   useToast().error(t('deploymentSwitcher.failedToSwitch'), {
     description: refusal,
     duration: 8000
@@ -56,5 +71,10 @@ export function useDeploymentSwitchGuard() {
     reloadForDeploymentSwitch(() => void store.load())
   }
 
-  return { targetLabel, withoutLeavePrompt, reloadOntoCurrent }
+  return {
+    targetLabel,
+    withoutLeavePrompt,
+    landWhenAlreadyPicked,
+    reloadOntoCurrent
+  }
 }
