@@ -101,7 +101,8 @@ import type {
   Comfy,
   NodeCreatedEvent,
   NodeHandle,
-  WidgetCollection
+  WidgetCollection,
+  WidgetHandle
 } from '@/platform/nodeApi/v4/types'
 import { runMissingModelPipeline } from '@/platform/workflowErrors/missingModel/missingModelPipeline'
 import * as missingMediaPipeline from '@/platform/workflowErrors/missingMedia/missingMediaPipeline'
@@ -2384,6 +2385,32 @@ describe('ComfyApp', () => {
         }
       )
 
+      it('takes what an afterLoadGraph hook changes in a reload of the open workflow without making the undo before it a load', async () => {
+        const { comfy } = nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        const { tracker } = historyOfTheOpenWorkflow()
+        comfy.graph.node('1')?.setTitle('Edited by the user')
+        let hookRunsLeft = 1
+        mockExtensionService.invokeExtensionsAsync.mockImplementation(
+          async (hook) => {
+            const node = app.rootGraph.nodes.at(0)
+            if (hook !== 'afterLoadGraph' || !node || !hookRunsLeft--) return []
+            node.color = '#123456'
+            return []
+          }
+        )
+        await app.loadGraphData(structuredClone(tracker.activeState), false)
+        const restores = vi.spyOn(app, 'loadGraphData')
+
+        await tracker.undo()
+
+        expect(
+          restores.mock.calls.map(
+            ([, , , , options]) => options?.restoreHistory
+          )
+        ).toEqual([true])
+      })
+
       it.for(['a history restore', 'an undo across a load'])(
         'keeps an onWorkflowLoaded edit made during %s in the restored state, so the next undo leaves it and redo is kept',
         async (kind) => {
@@ -2466,6 +2493,46 @@ describe('ComfyApp', () => {
         expect(removedByRedo[0]).toBe(kept)
         expect(kept.isDeleted).toBe(false)
         expect(comfy.graph.node(kept.id)).toBe(kept)
+      })
+
+      it('gives a removal hook the pack’s own widget handle, still reading its widget, when redo removes a node undo restored', async () => {
+        const { comfy, packId } =
+          nodeApiWithNodeTypeThatTakesItsHandleWhenAdded()
+        const [[nodeTypeHooks]] = vi.mocked(
+          mockExtensionService.registerExtension
+        ).mock.calls
+        nodeTypeHooks.beforeRegisterNodeDef?.(
+          LiteGraph.registered_node_types.HandleProbe,
+          hostNodeDef('HandleProbe'),
+          app
+        )
+        const removed: [string, WidgetHandle | undefined, unknown][] = []
+        comfy.defs.extend(packId, 'HandleProbe', (builder) => {
+          builder.onCreated((node) => {
+            node.widgets.add({ type: 'number', name: 'level', value: 3 })
+          })
+          builder.onRemoved((node) => {
+            const widget = node.widgets.get('level')
+            removed.push([node.id, widget, widget?.getValue()])
+          })
+        })
+        await app.loadGraphData(workflowWithFixedIdAndOneNode(), false)
+        const { tracker } = historyOfTheOpenWorkflow()
+        const kept = await addedProbe(comfy)
+        expect(kept.remove()).toBe(true)
+        await tracker.undo()
+        const keptWidget = kept.widgets.get('level')
+        assert(keptWidget)
+        removed.length = 0
+
+        await tracker.redo()
+        const [[, widget, value], ...more] = removed.filter(
+          ([id]) => id === kept.id
+        )
+
+        expect(more).toEqual([])
+        expect(widget).toBe(keptWidget)
+        expect(value).toBe(3)
       })
 
       it('retires the handle when undo goes back to before the node was added, so the node that takes its id next gets another', async () => {
