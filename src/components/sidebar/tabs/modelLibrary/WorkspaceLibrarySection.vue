@@ -60,14 +60,8 @@
           {{ $t('g.retry') }}
         </Button>
       </div>
-      <p
-        v-else-if="!libraryShelves.length"
-        class="m-0 text-xs text-muted-foreground"
-      >
-        {{ $t('sideToolbar.workspaceLibrary.empty') }}
-      </p>
       <p v-else-if="!shelves.length" class="m-0 text-xs text-muted-foreground">
-        {{ $t('g.noResults') }}
+        {{ $t(emptyMessageKey) }}
       </p>
       <div v-for="shelf in shelves" :key="shelf.folder">
         <h3 class="m-0 text-xs font-medium text-muted-foreground">
@@ -145,6 +139,12 @@ const shelves = computed(() => {
     }))
     .filter((shelf) => shelf.names.length > 0)
 })
+
+const emptyMessageKey = computed(() =>
+  libraryShelves.value.length
+    ? 'g.noResults'
+    : 'sideToolbar.workspaceLibrary.empty'
+)
 
 const modelCount = computed(() =>
   folders.value.every((folder) => library.hasLoaded(folder))
