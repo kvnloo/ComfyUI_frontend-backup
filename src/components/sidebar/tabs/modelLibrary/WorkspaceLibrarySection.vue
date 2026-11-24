@@ -84,9 +84,9 @@
             </Button>
             <i
               role="img"
-              :aria-label="$t('sideToolbar.workspaceLibrary.downloadsOnRun')"
-              :title="$t('sideToolbar.workspaceLibrary.downloadsOnRun')"
-              class="icon-[lucide--cloud-download] size-3.5 text-muted-foreground"
+              :aria-label="$t('sideToolbar.workspaceLibrary.fromWorkspace')"
+              :title="$t('sideToolbar.workspaceLibrary.fromWorkspace')"
+              class="icon-[lucide--cloud] size-3.5 text-muted-foreground"
             />
           </li>
         </ul>

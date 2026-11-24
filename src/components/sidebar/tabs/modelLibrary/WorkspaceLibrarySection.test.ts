@@ -103,7 +103,7 @@ describe('WorkspaceLibrarySection', () => {
     )
   })
 
-  it('marks each model as one that downloads when a job runs and counts them in the header', async () => {
+  it('marks each model as from the workspace, not as a download a build may not need, and counts them in the header', async () => {
     library.set('loras', [
       'detail-tweaker.safetensors',
       'portrait-detail.safetensors'
@@ -119,9 +119,11 @@ describe('WorkspaceLibrarySection', () => {
 
     await waitFor(() =>
       expect(
-        screen.getAllByRole('img', { name: 'Downloads when a job runs' })
+        screen.getAllByRole('img', { name: 'From your workspace' })
       ).toHaveLength(3)
     )
+    expect(screen.queryByText(/download/i)).toBeNull()
+    expect(screen.queryByRole('img', { name: /download/i })).toBeNull()
     expect(
       screen.getByRole('button', { name: 'Workspace library 3 models' })
     ).toBeInTheDocument()

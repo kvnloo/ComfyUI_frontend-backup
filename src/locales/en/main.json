@@ -1078,7 +1078,7 @@
       "explainer": "Models in your workspace. Ones not in this build download when a job needs them.",
       "empty": "No models in your workspace library.",
       "loadFailed": "Couldn't load your workspace library.",
-      "downloadsOnRun": "Downloads when a job runs",
+      "fromWorkspace": "From your workspace",
       "modelCount": "{count} model | {count} models"
     },
     "searchResultsCapped": "Showing the first {limit} matches. Refine your search to see more specific results.",
