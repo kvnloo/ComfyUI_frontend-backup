@@ -165,8 +165,9 @@ export const usePlatformFrameStore = defineStore('platformFrame', () => {
       (deployment) =>
         deployment.release_id === current.releaseId &&
         deployment.status === 'ready' &&
-        (current.kind === 'new' ||
-          deployment.deployment_id === current.deploymentId)
+        (current.deploymentId
+          ? deployment.deployment_id === current.deploymentId
+          : current.kind === 'new')
     )
   }
 

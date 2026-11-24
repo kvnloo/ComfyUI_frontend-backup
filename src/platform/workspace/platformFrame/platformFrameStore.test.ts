@@ -657,6 +657,40 @@ describe('following a build after the dialog closes', () => {
     )
   })
 
+  it('switches to the deployment Platform named, not a newer one on the same release, when a resumed build lands', async () => {
+    vi.useFakeTimers()
+    const OTHER_ON_RELEASE: Deployment = {
+      ...NEW_DEPLOYMENT,
+      deployment_id: 'dep-10'
+    }
+    const pickStore = useDeploymentPickStore()
+    pickStore.state = listing([RUNNING])
+    const load = vi.spyOn(pickStore, 'load').mockResolvedValue()
+    const store = usePlatformFrameStore()
+    const { frame } = framedWindow()
+    store.open({ step: 'new', startAtNodes: true }, 'extensions')
+    store.attach(frame)
+    receive(startedNew, frame)
+    receive(
+      { type: 'deploy-sent', releaseId: 'r-9', deploymentId: 'dep-9' },
+      frame
+    )
+    reloadEditor(store)
+    load.mockImplementation(async () => {
+      pickStore.state = listing([OTHER_ON_RELEASE, NEW_DEPLOYMENT, RUNNING])
+    })
+    const pick = vi.spyOn(pickStore, 'pick').mockResolvedValue(null)
+
+    store.resume()
+    await vi.advanceTimersByTimeAsync(PLATFORM_FRAME_RESUME_CHECK_MS)
+    const [toast] = useToast().toasts
+    toast.actions[0].onClick()
+
+    await vi.waitFor(() =>
+      expect(pick).toHaveBeenCalledExactlyOnceWith('dep-9')
+    )
+  })
+
   it('says so when the switch to the new deployment is refused', async () => {
     const { pickStore, toast } = readyNewDeployment()
     vi.spyOn(pickStore, 'pick').mockResolvedValue('Not allowed')
