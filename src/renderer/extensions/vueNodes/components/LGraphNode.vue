@@ -405,6 +405,11 @@ const showErrorsTabEnabled = computed(() =>
 )
 
 const displayHeader = computed(() => nodeData.titleMode !== TitleMode.NO_TITLE)
+const bodyTop = computed(
+  () =>
+    (displayHeader.value ? VUE_NODE_BODY.headerHeight : 0) -
+    LiteGraph.NODE_TITLE_HEIGHT
+)
 
 const isRerouteNode = computed(() => nodeData.type === 'Reroute')
 
@@ -572,7 +577,7 @@ function handleResizeDoubleClick(event: MouseEvent) {
   else if (layout && !mediaRegions.value.length) {
     resizeNodeTo(
       layout.minBodyHeight +
-        BODY_TOP +
+        bodyTop.value +
         footerOverhang.value +
         LiteGraph.NODE_TITLE_HEIGHT
     )
@@ -943,7 +948,7 @@ const contentHeights = shallowReactive(new Map<string, number>())
 
 const bodyWidth = computed(() => Math.max(size.value.width, MIN_NODE_WIDTH))
 const bodyHeight = computed(
-  () => size.value.height - BODY_TOP - footerOverhang.value
+  () => size.value.height - bodyTop.value - footerOverhang.value
 )
 
 const bodyLayout = computed<VueNodeBodyLayout | undefined>((previous) => {
@@ -960,11 +965,9 @@ const bodyLayout = computed<VueNodeBodyLayout | undefined>((previous) => {
   return previous && isEqual(previous, next) ? previous : next
 })
 
-const BODY_TOP = VUE_NODE_BODY.headerHeight - LiteGraph.NODE_TITLE_HEIGHT
-
 function offsetFromBody(points: ReadonlyMap<number, { x: number; y: number }>) {
   return new Map(
-    [...points].map(([index, { x, y }]) => [index, { x, y: y + BODY_TOP }])
+    [...points].map(([index, { x, y }]) => [index, { x, y: y + bodyTop.value }])
   )
 }
 
