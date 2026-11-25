@@ -22,7 +22,7 @@
         isRerouteNode
           ? 'h-(--node-height)'
           : compactHeader
-            ? 'w-max max-w-(--min-node-width)'
+            ? 'w-max max-w-(--collapsed-node-max-width)'
             : 'min-h-(--node-height) min-w-(--min-node-width)',
         cursorClass,
         shouldHandleNodePointerEvents &&
@@ -34,7 +34,8 @@
     "
     :style="{
       ...nodeSizeStyle,
-      '--min-node-width': `${MIN_NODE_WIDTH}px`,
+      '--min-node-width': `${minNodeWidth}px`,
+      '--collapsed-node-max-width': `${MIN_NODE_WIDTH}px`,
       '--node-header-height': `${VUE_NODE_BODY.headerHeight}px`,
       transform: nodeTransform,
       zIndex: zIndex,
@@ -85,6 +86,7 @@
     >
       <div
         data-testid="node-inner-wrapper"
+        data-part="node-frame"
         :class="
           cn(
             'flex flex-1 flex-col bg-node-header',
@@ -159,6 +161,7 @@
               paddingBottom: `${VUE_NODE_BODY.paddingBottom}px`
             }"
             :data-testid="`node-body-${nodeData.id}`"
+            data-part="node-body"
           >
             <NodeSlots :node-data />
 
@@ -589,7 +592,7 @@ const { startResize } = useNodeResize((result) => {
   if (isCollapsed.value) return
   resizeNodeTo(
     result.size.height,
-    Math.max(result.size.width, MIN_NODE_WIDTH),
+    Math.max(result.size.width, minNodeWidth.value),
     result.position
   )
 })
@@ -797,6 +800,34 @@ const { canSelectInputs, gridRows, nodeType, processedWidgets } =
     () => nodeData,
     () => renderedWidgetIds.value
   )
+const measuredLabelsKey = computed(() =>
+  [
+    nodeData.title,
+    ...nodeData.inputs.map(
+      (slot) => slot.label || slot.localized_name || slot.name
+    ),
+    ...nodeData.outputs.map(
+      (slot) => slot.label || slot.localized_name || slot.name
+    ),
+    ...processedWidgets.value
+      .filter(({ visible }) => visible)
+      .map(
+        ({ widgetId, simplified }) =>
+          `${widgetId}:${simplified.displayLabel ?? simplified.name}`
+      )
+  ].join('\n')
+)
+
+const minNodeWidth = ref(LiteGraph.NODE_WIDTH)
+watch(
+  [lgraphNode, measuredLabelsKey, isCollapsed],
+  ([node, , collapsed]) => {
+    if (node && !collapsed)
+      minNodeWidth.value = Math.ceil(node.computeSize()[0])
+  },
+  { immediate: true }
+)
+
 const hasRenderableWidgets = computed(() => gridRows.value.length > 0)
 const processedWidgetModel = computed(() => ({
   processedWidgets: gridRows.value,
@@ -946,7 +977,7 @@ const slotItems = shallowRef<(() => BodyItem[]) | undefined>()
 const widgetItems = shallowRef<(() => BodyItem[]) | undefined>()
 const contentHeights = shallowReactive(new Map<string, number>())
 
-const bodyWidth = computed(() => Math.max(size.value.width, MIN_NODE_WIDTH))
+const bodyWidth = computed(() => Math.max(size.value.width, minNodeWidth.value))
 const bodyHeight = computed(
   () => size.value.height - bodyTop.value - footerOverhang.value
 )
