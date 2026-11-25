@@ -166,6 +166,7 @@
     "attach": "ファイルを添付",
     "attachFiles": "画像またはファイルをアップロード",
     "attachmentCountExceeded": "1つのメッセージに添付できるファイルは{count}件までです",
+    "attachmentEmpty": "{name} は空のため、添付できませんでした",
     "attachmentInvalidVideo": "{name} は有効な動画ファイルではありません。削除して別のファイルを試してください。",
     "attachmentNamesOverflow": "{names}、ほか{count}件",
     "attachmentTooLarge": "{name} は {limit} を超えています",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name}はエージェントが受け付けるファイル形式ではありません。送信するには削除してください。",
     "sendBusy": "すでにメッセージを送信中です",
     "sendFailed": "メッセージを送信できませんでした",
+    "sendFailedDisownedWorkflow": "このワークフローは利用できなくなりました。",
+    "sendFailedNetwork": "メッセージがサーバーに届きませんでした。接続を確認して、もう一度お試しください。",
+    "sendFailedOffscreen": "メッセージを送信できませんでした",
+    "sendFailedOffscreenShow": "表示",
+    "sendFailedTurnInProgress": "このチャットではまだ応答が実行中です。",
+    "sendFailedUncertain": "サーバーがメッセージを受信したか確認できませんでした。再送信する前にチャットを確認してください。",
     "sendTurnInProgress": "このチャットではまだ応答が実行中です。完了を待つか、停止してからもう一度送信してください。",
+    "sendingMessage": "送信中…",
     "showChatHistory": "チャット履歴を表示",
     "showLess": "表示を減らす",
     "showMore": "さらに表示",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "パートナーノード利用",
       "apiUsage": "API利用",
       "creditAdded": "クレジット追加",
-      "gpuUsage": "GPU利用"
+      "gpuUsage": "GPU利用",
+      "routerUsage": "ルーター使用量"
     },
     "faqs": "よくある質問",
     "formerMember": "{name}（以前のメンバー）",
@@ -1516,6 +1525,15 @@
     "member": "メンバー",
     "messageSupport": "サポートにメッセージ",
     "model": "モデル",
+    "personalWallet": {
+      "addCredits": "個人用クレジットを追加",
+      "apiKeyDescription": "このキーでは個人アカウントに請求されます。チームの API キーを作成するか、個人用クレジットを追加してください。",
+      "createTeamApiKey": "チーム API キーを作成",
+      "sessionDescription": "このセッションでは個人アカウントに請求されます。チームに請求するには、そのワークスペースに切り替えてください。",
+      "sessionNoTeamsDescription": "このセッションでは個人アカウントに請求されます。続行するには個人用クレジットを追加してください。",
+      "switchTo": "{workspaceName} に切り替える",
+      "title": "個人アカウントのクレジットが不足しています"
+    },
     "purchaseCredits": "クレジットを購入",
     "refreshes": "{date}にリフレッシュ",
     "time": "時間",
@@ -2109,6 +2127,13 @@
         "title": "生成に失敗しました",
         "toastMessage": "GPUメモリが不足しています。画像解像度やバッチサイズを下げて再実行してください。",
         "toastTitle": "生成に失敗しました"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "この実行では個人アカウントに請求されましたが、クレジットが不足しています。",
+        "title": "クレジット不足",
+        "toastMessage": "この実行では個人アカウントに請求されましたが、クレジットが不足しています。",
+        "toastTitle": "クレジット不足"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "一部のノードには新しいバージョンのComfyUIが必要です。すべてのノードを使用するには更新してください。",
     "unknownVersion": "不明"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "接続済み：エージェントがComfy MCPを通じてここでワークフローを実行しました。",
+    "copyConfig": "コピー",
+    "description": "ClaudeやCursorなどのAIエージェントが、Comfy MCPを通じてこのComfyUI上でワークフローを実行できるようにします。これはお使いのマシン上で動作します。",
+    "label": "エージェント",
+    "locations": {
+      "claudeDesktop": "claude_desktop_config.json（設定 > 開発者 > 設定を編集）に追加してから、Claude Desktopを再起動してください。",
+      "cursor": "~/.cursor/mcp.json、またはプロジェクト内の.cursor/mcp.jsonに追加してください。"
+    },
+    "openDocs": "完全なセットアップガイド",
+    "step1": "1. Comfy MCPをインストール",
+    "step2": "2. クライアントに追加",
+    "step3": "3. エージェントにワークフローの実行を依頼",
+    "step3Hint": "クライアントを再起動してから、ローカルのComfyUIが実行中であることを確認し、ワークフローを実行するようエージェントに依頼してください。初回の実行後、このパネルに「接続済み」と表示されます。",
+    "title": "AIエージェントを接続"
+  },
   "logsTerminal": {
     "loadError": "ログを読み込めません。ComfyUI バックエンドが最新であることを確認してください。",
     "resyncError": "バックエンド再接続後にログを再同期できませんでした。再度コンソールを開いて再試行してください。"
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud でサインインを求められます。",
       "openOnCloud": "Comfy Cloud で開く",
       "ready": "Comfy Cloud には、このワークフローで使用するすべてのノードとモデルがあります。新しいタブで開き、すぐに実行できます。",
-      "title": "Comfy Cloud で実行"
+      "readyWithUncheckedInputs": "Comfy Cloud には、確認可能なすべてのノードとモデルがあります。以下の入力のモデルは確認できませんでした：{inputs}。新しいタブで開きます。",
+      "title": "Comfy Cloud で実行",
+      "uncheckedInput": "{nodeType} の {input}"
     },
     "verifyAccessFailed": "Comfy Cloudへのアクセスを確認できませんでした",
     "verifyAccessFailedDetail": "Cloudボタンがまだ利用可能な場合は、もう一度「Comfy Cloudで開く」を選択してください。"
@@ -4538,6 +4586,32 @@
     "tooltip": "パートナーノードは、Comfyを通じて、プロバイダーのハードウェア上でKlingやVeoなどのクローズドソースモデルを実行します。クレジットを使用しますが、Comfyのその他の機能は無料のままです。",
     "unmuteOpen": "オープンウェイトclipのミュートを解除",
     "unmutePartner": "パートナーノードclipのミュートを解除"
+  },
+  "platformFrame": {
+    "buildFailed": "ビルドに失敗しました。{deployment} はデプロイされませんでした。",
+    "buildStep": "{of} ステップ中 {step} ステップ目",
+    "buildTakesMinutes": "これには数分かかります。作業を続けることができます。",
+    "building": "{deployment} をビルド中",
+    "deployFailed": "デプロイに失敗しました。{deployment} はビルドされましたが、デプロイされませんでした。",
+    "deploying": "{deployment} をデプロイ中",
+    "finishingOnPrevious": "v{version} でジョブを完了しています。 | v{version} で {count} 件のジョブを完了しています。",
+    "getStarted": "開始する",
+    "later": "後で",
+    "nothingChanged": "変更はありません：{deployment} は引き続き v{version} で実行されています。",
+    "nothingChangedNoVersion": "変更はありません：{deployment} は以前と同じ状態で実行されています。",
+    "openOnPlatform": "プラットフォームで開く",
+    "openRunOn": "「Run on」を開く",
+    "preinstallTitle": "このワークフローを実行するためにモデルを事前インストール",
+    "readyNew": "{deployment} の準備ができました。「Run on」で選択してください。",
+    "readyUpdate": "{deployment} は現在 v{version} で実行されています。",
+    "readyUpdateReload": "{deployment} は現在 v{version} で実行されています。ノードを使用するには再読み込みしてください。",
+    "reload": "再読み込み",
+    "title": "カスタムデプロイメント",
+    "unanswered": "プラットフォームはここで開きませんでした。",
+    "updateDeployment": "{deployment} を更新",
+    "updateShortcut": "更新するには E を押してください。",
+    "updateUnfinished": "{deployment} の v{version} への更新は完了しませんでした。",
+    "viewDetails": "詳細を表示"
   },
   "profileMenu": {
     "balanceUnavailable": "残高を読み込めませんでした。",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "お気に入りに追加",
+    "addMissingModelsToBuild": "不足しているモデルをビルドに追加",
     "addToDeploymentBuild": "Platform上の{deployment}のビルドにこれらを追加してから、新しいリリースをデプロイしてください。",
     "advancedInputs": "詳細入力",
     "askAgent": "エージェントに質問",
@@ -5153,6 +5228,7 @@
     "viewControls": "ビューコントロール"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "このデプロイメントにモデルを追加",
     "assets": "アセット",
     "backToAssets": "すべてのアセットに戻る",
     "browseTemplates": "サンプルテンプレートを表示",
@@ -5336,7 +5412,13 @@
         "open": "開く"
       }
     },
-    "workflows": "ワークフロー"
+    "workflows": "ワークフロー",
+    "workspaceLibrary": {
+      "empty": "ワークスペースライブラリにモデルがありません。",
+      "explainer": "ワークスペース内のモデルです。このビルドに含まれないモデルは、ジョブで必要になったときにダウンロードされます。",
+      "loadFailed": "ワークスペースライブラリを読み込めませんでした。",
+      "title": "ワークスペースライブラリ"
+    }
   },
   "skillPacks": {
     "errors": {

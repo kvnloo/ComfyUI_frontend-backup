@@ -166,6 +166,7 @@
     "attach": "إرفاق ملف",
     "attachFiles": "ارفع صورًا أو ملفات",
     "attachmentCountExceeded": "يمكن إرفاق {count} ملفات فقط برسالة واحدة",
+    "attachmentEmpty": "{name} فارغ وتعذّر إرفاقه",
     "attachmentInvalidVideo": "{name} ليس ملف فيديو صالحًا. أزِله وجرّب ملفًا آخر.",
     "attachmentNamesOverflow": "{names} و{count} أخرى",
     "attachmentTooLarge": "حجم {name} أكبر من {limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} ليس نوع ملف يقبله الوكيل. أزِله للإرسال.",
     "sendBusy": "يجري بالفعل إرسال رسالة",
     "sendFailed": "تعذر إرسال الرسالة",
+    "sendFailedDisownedWorkflow": "لم تعد سير العمل هذه متاحة.",
+    "sendFailedNetwork": "لم تصل الرسالة إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.",
+    "sendFailedOffscreen": "تعذّر إرسال رسالتك",
+    "sendFailedOffscreenShow": "إظهار",
+    "sendFailedTurnInProgress": "كانت هناك استجابة لا تزال قيد التشغيل في هذه الدردشة.",
+    "sendFailedUncertain": "تعذّر تأكيد ما إذا كان الخادم قد تلقّى رسالتك. تحقّق من الدردشة قبل الإرسال مرة أخرى.",
     "sendTurnInProgress": "لا تزال هناك استجابة قيد التشغيل في هذه الدردشة. انتظر حتى تنتهي، أو أوقفها، ثم أرسل مرة أخرى.",
+    "sendingMessage": "جارٍ الإرسال…",
     "showChatHistory": "إظهار سجل المحادثات",
     "showLess": "إظهار أقل",
     "showMore": "إظهار المزيد",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "استخدام عقدة الشريك",
       "apiUsage": "استخدام API",
       "creditAdded": "تمت إضافة أرصدة",
-      "gpuUsage": "استخدام GPU"
+      "gpuUsage": "استخدام GPU",
+      "routerUsage": "استخدام الموجّه"
     },
     "faqs": "الأسئلة المتكررة",
     "formerMember": "{name} (عضو سابق)",
@@ -1516,6 +1525,15 @@
     "member": "عضو",
     "messageSupport": "مراسلة الدعم",
     "model": "النموذج",
+    "personalWallet": {
+      "addCredits": "إضافة أرصدة شخصية",
+      "apiKeyDescription": "تُحتسب رسوم هذا المفتاح على حسابك الشخصي. أنشئ مفتاح API لفريق أو أضف أرصدة شخصية.",
+      "createTeamApiKey": "إنشاء مفتاح API لفريق",
+      "sessionDescription": "تُحتسب رسوم هذه الجلسة على حسابك الشخصي. لتحميل الرسوم على فريق بدلًا من ذلك، انتقل إلى مساحة عمله.",
+      "sessionNoTeamsDescription": "تُحتسب رسوم هذه الجلسة على حسابك الشخصي. أضف أرصدة شخصية للمتابعة.",
+      "switchTo": "التبديل إلى {workspaceName}",
+      "title": "نفد رصيد حسابك الشخصي"
+    },
     "purchaseCredits": "شراء رصيد",
     "refreshes": "يتم التحديث في {date}",
     "time": "الوقت",
@@ -2109,6 +2127,13 @@
         "title": "فشل التوليد",
         "toastMessage": "لا توجد ذاكرة GPU كافية. حاول تقليل دقة الصورة أو حجم الدفعة وأعد المحاولة.",
         "toastTitle": "فشل التوليد"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "تمت فوترة هذا التشغيل على حسابك الشخصي، الذي نفد رصيده.",
+        "title": "رصيد غير كافٍ",
+        "toastMessage": "تمت فوترة هذا التشغيل على حسابك الشخصي، الذي نفد رصيده.",
+        "toastTitle": "رصيد غير كافٍ"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "تتطلب بعض العقد إصدارًا أحدث من ComfyUI. يُرجى التحديث لاستخدام جميع العقد.",
     "unknownVersion": "غير معروف"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "متصل: شغّل وكيل سير عمل هنا عبر Comfy MCP.",
+    "copyConfig": "نسخ",
+    "description": "اسمح لوكيل ذكاء اصطناعي مثل Claude أو Cursor بتشغيل سير العمل على ComfyUI هذا عبر Comfy MCP. يعمل على جهازك.",
+    "label": "الوكيل",
+    "locations": {
+      "claudeDesktop": "أضِف إلى claude_desktop_config.json (الإعدادات > المطوّر > تحرير الإعدادات)، ثم أعِد تشغيل Claude Desktop.",
+      "cursor": "أضِف إلى ~/.cursor/mcp.json، أو إلى .cursor/mcp.json في مشروع."
+    },
+    "openDocs": "دليل الإعداد الكامل",
+    "step1": "1. ثبّت Comfy MCP",
+    "step2": "2. أضِفه إلى عميلك",
+    "step3": "3. اطلب من وكيلك تشغيل سير عمل",
+    "step3Hint": "أعِد تشغيل عميلك، ثم اطلب منه تأكيد أن ComfyUI المحلي لديك قيد التشغيل وتشغيل سير عمل. تعرض هذه اللوحة «متصل» بعد التشغيل الأول.",
+    "title": "وصّل وكيل الذكاء الاصطناعي الخاص بك"
+  },
   "logsTerminal": {
     "loadError": "تعذر تحميل السجلات، يرجى التأكد من أنك قمت بتحديث الواجهة الخلفية لـ ComfyUI.",
     "resyncError": "تعذر إعادة مزامنة السجلات بعد إعادة اتصال الواجهة الخلفية. أعد فتح وحدة التحكم للمحاولة مرة أخرى."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "سيطلب منك Comfy Cloud تسجيل الدخول.",
       "openOnCloud": "فتح على Comfy Cloud",
       "ready": "يحتوي Comfy Cloud على كل عقدة ونموذج يستخدمهما سير العمل هذا. سيفتح في علامة تبويب جديدة، جاهزًا للتشغيل.",
-      "title": "تشغيل على Comfy Cloud"
+      "readyWithUncheckedInputs": "يتضمن Comfy Cloud كل عقدة ونموذج تمكّن من التحقق منهما. تعذر عليه التحقق من النماذج لهذه المدخلات: {inputs}. سيُفتح في علامة تبويب جديدة.",
+      "title": "تشغيل على Comfy Cloud",
+      "uncheckedInput": "{input} على {nodeType}"
     },
     "verifyAccessFailed": "تعذر التحقق من الوصول إلى Comfy Cloud",
     "verifyAccessFailedDetail": "إذا كان زر Cloud لا يزال متاحًا، فاختر «فتح على Comfy Cloud» مرة أخرى."
@@ -4538,6 +4586,32 @@
     "tooltip": "تشغّل عُقد الشركاء نماذج مغلقة المصدر مثل Kling أو Veo على عتاد المزوّد، عبر Comfy. وهي تستخدم الأرصدة؛ ويبقى باقي Comfy مجانيًا.",
     "unmuteOpen": "إلغاء كتم صوت clip ذي الأوزان المفتوحة",
     "unmutePartner": "إلغاء كتم صوت clip لعقدة الشريك"
+  },
+  "platformFrame": {
+    "buildFailed": "فشل الإنشاء. لم يتم نشر {deployment}.",
+    "buildStep": "الخطوة {step} من {of}",
+    "buildTakesMinutes": "يستغرق هذا بضع دقائق. يمكنك متابعة العمل.",
+    "building": "جارٍ إنشاء {deployment}",
+    "deployFailed": "فشل النشر. تم إنشاء {deployment} ولكن لم يتم نشره.",
+    "deploying": "جارٍ نشر {deployment}",
+    "finishingOnPrevious": "جارٍ إنهاء مهمتك على v{version}. | جارٍ إنهاء {count} من مهامك على v{version}.",
+    "getStarted": "ابدأ",
+    "later": "لاحقًا",
+    "nothingChanged": "لم يتغير شيء: ما زال {deployment} يعمل بالإصدار v{version}.",
+    "nothingChangedNoVersion": "لم يتغير شيء: ما زال {deployment} يعمل كما كان سابقًا.",
+    "openOnPlatform": "فتح على المنصة",
+    "openRunOn": "فتح «التشغيل على»",
+    "preinstallTitle": "ثبّت النماذج مسبقًا لتشغيل سير العمل هذا",
+    "readyNew": "{deployment} جاهز. اختره ضمن «التشغيل على».",
+    "readyUpdate": "يعمل {deployment} الآن بالإصدار v{version}.",
+    "readyUpdateReload": "يعمل {deployment} الآن بالإصدار v{version}. أعد التحميل لاستخدام عقده.",
+    "reload": "إعادة التحميل",
+    "title": "نشر مخصص",
+    "unanswered": "لم تُفتح المنصة هنا.",
+    "updateDeployment": "تحديث {deployment}",
+    "updateShortcut": "اضغط على E لتحديثه.",
+    "updateUnfinished": "لم يُكمل {deployment} التحديث إلى v{version}.",
+    "viewDetails": "عرض التفاصيل"
   },
   "profileMenu": {
     "balanceUnavailable": "تعذّر تحميل رصيدك.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "إضافة إلى المفضلة",
+    "addMissingModelsToBuild": "أضف النماذج المفقودة إلى الإصدار",
     "addToDeploymentBuild": "أضف هذه إلى إصدار {deployment} على Platform، ثم انشر إصداراً جديداً.",
     "advancedInputs": "مدخلات متقدمة",
     "askAgent": "اسأل الوكيل",
@@ -5153,6 +5228,7 @@
     "viewControls": "عناصر تحكم العرض"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "أضف النماذج إلى هذا النشر",
     "assets": "الأصول",
     "backToAssets": "العودة إلى جميع الأصول",
     "browseTemplates": "تصفح القوالب المثال",
@@ -5336,7 +5412,13 @@
         "open": "فتح"
       }
     },
-    "workflows": "سير العمل"
+    "workflows": "سير العمل",
+    "workspaceLibrary": {
+      "empty": "لا توجد نماذج في مكتبة مساحة عملك.",
+      "explainer": "النماذج في مساحة عملك. تُنزَّل النماذج غير الموجودة في هذا الإصدار عندما تحتاج إليها مهمة.",
+      "loadFailed": "تعذر تحميل مكتبة مساحة عملك.",
+      "title": "مكتبة مساحة العمل"
+    }
   },
   "skillPacks": {
     "errors": {

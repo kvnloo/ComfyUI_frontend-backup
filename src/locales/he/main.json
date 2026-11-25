@@ -166,6 +166,7 @@
     "attach": "צרף קובץ",
     "attachFiles": "העלאת תמונות או קבצים",
     "attachmentCountExceeded": "ניתן לצרף רק {count} קבצים להודעה אחת",
+    "attachmentEmpty": "{name} ריק ולא ניתן היה לצרף אותו",
     "attachmentInvalidVideo": "{name} אינו קובץ וידאו תקין. הסר אותו ונסה קובץ אחר.",
     "attachmentNamesOverflow": "{names} ועוד {count}",
     "attachmentTooLarge": "{name} גדול מ-{limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} אינו מסוג קובץ שהסוכן מקבל. הסירו אותו כדי לשלוח.",
     "sendBusy": "הודעה כבר נשלחת",
     "sendFailed": "שליחת ההודעה נכשלה",
+    "sendFailedDisownedWorkflow": "תהליך העבודה הזה אינו זמין עוד.",
+    "sendFailedNetwork": "ההודעה לא הגיעה לשרת. בדוק את החיבור שלך ונסה שוב.",
+    "sendFailedOffscreen": "לא ניתן היה לשלוח את ההודעה שלך",
+    "sendFailedOffscreenShow": "הצג",
+    "sendFailedTurnInProgress": "תשובה עדיין הייתה בתהליך בצ'אט הזה.",
+    "sendFailedUncertain": "לא ניתן היה לאשר אם השרת קיבל את ההודעה שלך. בדוק את הצ'אט לפני שליחה חוזרת.",
     "sendTurnInProgress": "בצ'אט זה עדיין פועלת תגובה. המתן לסיומה, או עצור אותה, ולאחר מכן שלח שוב.",
+    "sendingMessage": "שולח…",
     "showChatHistory": "הצג היסטוריית צ'אטים",
     "showLess": "הצג פחות",
     "showMore": "הצג עוד",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "שימוש בצומת שותף",
       "apiUsage": "שימוש ב-API",
       "creditAdded": "קרדיטים נוספו",
-      "gpuUsage": "שימוש ב-GPU"
+      "gpuUsage": "שימוש ב-GPU",
+      "routerUsage": "שימוש בנתב"
     },
     "faqs": "שאלות נפוצות",
     "formerMember": "{name} (חבר/ת לשעבר)",
@@ -1516,6 +1525,15 @@
     "member": "חבר/ת",
     "messageSupport": "שליחת הודעה לתמיכה",
     "model": "מודל",
+    "personalWallet": {
+      "addCredits": "הוספת קרדיטים אישיים",
+      "apiKeyDescription": "מפתח זה מחייב את החשבון האישי שלך. צרו מפתח API של צוות או הוסיפו קרדיטים אישיים.",
+      "createTeamApiKey": "יצירת מפתח API של צוות",
+      "sessionDescription": "הפעלה זו מחייבת את החשבון האישי שלך. כדי לחייב צוות במקום זאת, עברו לסביבת העבודה שלו.",
+      "sessionNoTeamsDescription": "הפעלה זו מחייבת את החשבון האישי שלך. הוסיפו קרדיטים אישיים כדי להמשיך.",
+      "switchTo": "מעבר אל {workspaceName}",
+      "title": "אין יתרת קרדיטים בחשבון האישי שלך"
+    },
     "purchaseCredits": "רכישת קרדיטים",
     "refreshes": "מתחדש ב-{date}",
     "time": "זמן",
@@ -2109,6 +2127,13 @@
         "title": "היצירה נכשלה",
         "toastMessage": "אין מספיק זיכרון GPU. נסה להקטין את רזולוציית התמונה או את גודל האצווה ולהריץ שוב.",
         "toastTitle": "היצירה נכשלה"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "ההרצה הזו חויבה לחשבון האישי שלך, שאין בו מספיק קרדיטים.",
+        "title": "אין מספיק קרדיטים",
+        "toastMessage": "ההרצה הזו חויבה לחשבון האישי שלך, שאין בו מספיק קרדיטים.",
+        "toastTitle": "אין מספיק קרדיטים"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "חלק מהצמתים דורשים גרסה חדשה יותר של ComfyUI. יש לעדכן כדי להשתמש בכל הצמתים.",
     "unknownVersion": "לא ידוע"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "מחובר: סוכן הריץ כאן תהליך עבודה באמצעות Comfy MCP.",
+    "copyConfig": "העתק",
+    "description": "אפשר לסוכן AI כגון Claude או Cursor להריץ תהליכי עבודה ב-ComfyUI הזה באמצעות Comfy MCP. הוא פועל במחשב שלך.",
+    "label": "סוכן",
+    "locations": {
+      "claudeDesktop": "הוסף אל claude_desktop_config.json (הגדרות > מפתח > עריכת תצורה), ולאחר מכן הפעל מחדש את Claude Desktop.",
+      "cursor": "הוסף אל ~/.cursor/mcp.json, או אל .cursor/mcp.json בפרויקט."
+    },
+    "openDocs": "מדריך התקנה מלא",
+    "step1": "1. התקן את Comfy MCP",
+    "step2": "2. הוסף אותו ללקוח שלך",
+    "step3": "3. בקש מהסוכן שלך להריץ תהליך עבודה",
+    "step3Hint": "הפעל מחדש את הלקוח שלך, ולאחר מכן בקש ממנו לאשר ש-ComfyUI המקומי שלך פועל ולהריץ תהליך עבודה. לוח זה יציג \"מחובר\" לאחר ההרצה הראשונה.",
+    "title": "חבר את סוכן ה-AI שלך"
+  },
   "logsTerminal": {
     "loadError": "לא ניתן לטעון את היומנים, אנא ודא שעדכנת את שרת ComfyUI שלך.",
     "resyncError": "לא ניתן לסנכרן מחדש את היומנים לאחר התחברות השרת מחדש. פתח מחדש את המסוף כדי לנסות שוב."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud יבקש מכם להתחבר.",
       "openOnCloud": "פתח ב-Comfy Cloud",
       "ready": "ב-Comfy Cloud קיימים כל הצמתים והמודלים שבהם תהליך העבודה הזה משתמש. הוא ייפתח בלשונית חדשה, מוכן להפעלה.",
-      "title": "הפעל ב-Comfy Cloud"
+      "readyWithUncheckedInputs": "ל-Comfy Cloud יש כל צומת ומודל שהיה יכול לבדוק. לא ניתן היה לבדוק את המודלים עבור קלטים אלה: {inputs}. הוא ייפתח בלשונית חדשה.",
+      "title": "הפעל ב-Comfy Cloud",
+      "uncheckedInput": "{input} ב-{nodeType}"
     },
     "verifyAccessFailed": "לא ניתן היה לאמת את הגישה אל Comfy Cloud",
     "verifyAccessFailedDetail": "אם הלחצן Cloud עדיין זמין, בחרו שוב באפשרות פתיחה ב-Comfy Cloud."
@@ -4538,6 +4586,32 @@
     "tooltip": "צומתי שותפים מפעילים דרך Comfy מודלים בקוד סגור, כגון Kling או Veo, על חומרת הספק. הם משתמשים בקרדיטים; שאר Comfy נשאר חינמי.",
     "unmuteOpen": "ביטול השתקת clip בעל משקלים פתוחים",
     "unmutePartner": "ביטול השתקת clip של צומת שותף"
+  },
+  "platformFrame": {
+    "buildFailed": "הבנייה נכשלה. {deployment} לא נפרס.",
+    "buildStep": "שלב {step} מתוך {of}",
+    "buildTakesMinutes": "הפעולה נמשכת כמה דקות. אפשר להמשיך לעבוד.",
+    "building": "מתבצעת בנייה של {deployment}",
+    "deployFailed": "הפריסה נכשלה. {deployment} נבנה אך לא נפרס.",
+    "deploying": "מתבצעת פריסה של {deployment}",
+    "finishingOnPrevious": "מסיימים את המשימה שלך בגרסה v{version}. | מסיימים {count} מהמשימות שלך בגרסה v{version}.",
+    "getStarted": "התחלה",
+    "later": "מאוחר יותר",
+    "nothingChanged": "לא השתנה דבר: {deployment} עדיין פועל בגרסה v{version}.",
+    "nothingChangedNoVersion": "לא השתנה דבר: {deployment} עדיין פועל כפי שפעל קודם.",
+    "openOnPlatform": "פתיחה בפלטפורמה",
+    "openRunOn": "פתיחת 'הפעלה ב-'",
+    "preinstallTitle": "התקינו מראש מודלים כדי להריץ תהליך עבודה זה",
+    "readyNew": "{deployment} מוכן. בחרו בו תחת 'הפעלה ב-'.",
+    "readyUpdate": "{deployment} פועל כעת בגרסה v{version}.",
+    "readyUpdateReload": "{deployment} פועל כעת בגרסה v{version}. טענו מחדש כדי להשתמש בצמתים שלו.",
+    "reload": "טעינה מחדש",
+    "title": "פריסה מותאמת אישית",
+    "unanswered": "הפלטפורמה לא נפתחה כאן.",
+    "updateDeployment": "עדכון {deployment}",
+    "updateShortcut": "לחצו על E כדי לעדכן אותו.",
+    "updateUnfinished": "{deployment} לא סיים את העדכון לגרסה v{version}.",
+    "viewDetails": "הצגת פרטים"
   },
   "profileMenu": {
     "balanceUnavailable": "לא הצלחנו לטעון את היתרה שלכם.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "הוספה למועדפים",
+    "addMissingModelsToBuild": "הוספת המודלים החסרים לבנייה",
     "addToDeploymentBuild": "הוסיפו אותם ל-build של {deployment} ב-Platform, ולאחר מכן פרסו מהדורה חדשה.",
     "advancedInputs": "קלטים מתקדמים",
     "askAgent": "שאל את הסוכן",
@@ -5153,6 +5228,7 @@
     "viewControls": "בקרות תצוגה"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "הוספת מודלים לפריסה זו",
     "assets": "נכסים",
     "backToAssets": "חזרה לכל הנכסים",
     "browseTemplates": "עיון בתבניות לדוגמה",
@@ -5336,7 +5412,13 @@
         "open": "פתוחים"
       }
     },
-    "workflows": "תהליכי עבודה"
+    "workflows": "תהליכי עבודה",
+    "workspaceLibrary": {
+      "empty": "אין מודלים בספריית סביבת העבודה שלך.",
+      "explainer": "מודלים בסביבת העבודה שלך. מודלים שאינם בבנייה זו יורדו כאשר משימה תזדקק להם.",
+      "loadFailed": "לא ניתן היה לטעון את ספריית סביבת העבודה שלך.",
+      "title": "ספריית סביבת העבודה"
+    }
   },
   "skillPacks": {
     "errors": {

@@ -166,6 +166,7 @@
     "attach": "附加文件",
     "attachFiles": "上传图像或文件",
     "attachmentCountExceeded": "一条消息只能附加{count}个文件",
+    "attachmentEmpty": "{name} 为空，无法附加",
     "attachmentInvalidVideo": "{name} 不是有效的视频文件。请将其移除，然后尝试其他文件。",
     "attachmentNamesOverflow": "{names}以及另外{count}个",
     "attachmentTooLarge": "{name} 大于 {limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name}不是代理接受的文件类型。请将其移除后再发送。",
     "sendBusy": "已有消息正在发送",
     "sendFailed": "消息发送失败",
+    "sendFailedDisownedWorkflow": "此工作流已不再可用。",
+    "sendFailedNetwork": "消息未送达服务器。请检查网络连接后重试。",
+    "sendFailedOffscreen": "无法发送你的消息",
+    "sendFailedOffscreenShow": "显示",
+    "sendFailedTurnInProgress": "此聊天中仍有回复正在生成。",
+    "sendFailedUncertain": "无法确认服务器是否已收到你的消息。再次发送前，请检查聊天记录。",
     "sendTurnInProgress": "此聊天仍有回复正在生成。请等待其完成，或停止它后再发送。",
+    "sendingMessage": "正在发送…",
     "showChatHistory": "显示聊天记录",
     "showLess": "显示更少",
     "showMore": "显示更多",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "合作节点使用",
       "apiUsage": "API 使用",
       "creditAdded": "已添加积分",
-      "gpuUsage": "GPU 使用"
+      "gpuUsage": "GPU 使用",
+      "routerUsage": "路由器使用情况"
     },
     "faqs": "常见问题",
     "formerMember": "{name}（前成员）",
@@ -1516,6 +1525,15 @@
     "member": "成员",
     "messageSupport": "联系客服",
     "model": "模型",
+    "personalWallet": {
+      "addCredits": "添加个人积分",
+      "apiKeyDescription": "此密钥将从你的个人账户扣除积分。请创建团队 API 密钥或添加个人积分。",
+      "createTeamApiKey": "创建团队 API 密钥",
+      "sessionDescription": "此会话将从你的个人账户扣除积分。若要改为从团队扣除，请切换到其工作区。",
+      "sessionNoTeamsDescription": "此会话将从你的个人账户扣除积分。请添加个人积分以继续。",
+      "switchTo": "切换到 {workspaceName}",
+      "title": "你的个人账户积分已用尽"
+    },
     "purchaseCredits": "购买积分",
     "refreshes": "于 {date} 刷新",
     "time": "时间",
@@ -2109,6 +2127,13 @@
         "title": "生成失败",
         "toastMessage": "GPU 显存不足。请尝试降低图像分辨率或批量大小后重新运行。",
         "toastTitle": "生成失败"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "本次运行费用记入了你的个人账户，但账户额度已用尽。",
+        "title": "额度不足",
+        "toastMessage": "本次运行费用记入了你的个人账户，但账户额度已用尽。",
+        "toastTitle": "额度不足"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "部分节点需要更新版本的 ComfyUI。请更新以使用所有节点。",
     "unknownVersion": "未知"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "已连接：智能体已通过 Comfy MCP 在此处运行了工作流。",
+    "copyConfig": "复制",
+    "description": "让 Claude 或 Cursor 等 AI 智能体通过 Comfy MCP 在此 ComfyUI 上运行工作流。它在你的设备上运行。",
+    "label": "智能体",
+    "locations": {
+      "claudeDesktop": "添加到 claude_desktop_config.json（设置 > 开发者 > 编辑配置），然后重启 Claude Desktop。",
+      "cursor": "添加到 ~/.cursor/mcp.json，或项目中的 .cursor/mcp.json。"
+    },
+    "openDocs": "完整设置指南",
+    "step1": "1. 安装 Comfy MCP",
+    "step2": "2. 将其添加到你的客户端",
+    "step3": "3. 请你的智能体运行工作流",
+    "step3Hint": "重启你的客户端，然后请它确认本地 ComfyUI 正在运行并运行一个工作流。首次运行后，此面板将显示“已连接”。",
+    "title": "连接你的 AI 智能体"
+  },
   "logsTerminal": {
     "loadError": "无法加载日志，请确保已更新您的ComfyUI后端。",
     "resyncError": "后端重新连接后无法重新同步日志。请重新打开控制台以重试。"
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud 会要求您登录。",
       "openOnCloud": "在 Comfy Cloud 上打开",
       "ready": "Comfy Cloud 拥有此工作流使用的所有节点和模型。它会在新标签页中打开，可立即运行。",
-      "title": "在 Comfy Cloud 上运行"
+      "readyWithUncheckedInputs": "Comfy Cloud 拥有其能够检查的所有节点和模型。它无法检查这些输入所用的模型：{inputs}。将在新标签页中打开。",
+      "title": "在 Comfy Cloud 上运行",
+      "uncheckedInput": "{nodeType} 上的 {input}"
     },
     "verifyAccessFailed": "无法验证对 Comfy Cloud 的访问权限",
     "verifyAccessFailedDetail": "如果“云端”按钮仍然可用，请再次选择“在 Comfy Cloud 中打开”。"
@@ -4538,6 +4586,32 @@
     "tooltip": "合作伙伴节点通过 Comfy 在提供商的硬件上运行 Kling 或 Veo 等闭源模型。它们使用积分；Comfy 的其余部分仍然免费。",
     "unmuteOpen": "取消开放权重 clip 静音",
     "unmutePartner": "取消合作伙伴节点 clip 静音"
+  },
+  "platformFrame": {
+    "buildFailed": "构建失败。{deployment} 未部署。",
+    "buildStep": "第 {step} 步，共 {of} 步",
+    "buildTakesMinutes": "这需要几分钟。你可以继续工作。",
+    "building": "正在构建 {deployment}",
+    "deployFailed": "部署失败。{deployment} 已构建但未部署。",
+    "deploying": "正在部署 {deployment}",
+    "finishingOnPrevious": "正在 v{version} 上完成你的任务。|正在 v{version} 上完成你的 {count} 个任务。",
+    "getStarted": "开始使用",
+    "later": "稍后",
+    "nothingChanged": "没有更改：{deployment} 仍运行 v{version}。",
+    "nothingChangedNoVersion": "没有更改：{deployment} 仍按原样运行。",
+    "openOnPlatform": "在 Platform 中打开",
+    "openRunOn": "打开“运行于”",
+    "preinstallTitle": "预安装模型以运行此工作流",
+    "readyNew": "{deployment} 已就绪。请在“运行于”下选择它。",
+    "readyUpdate": "{deployment} 现运行 v{version}。",
+    "readyUpdateReload": "{deployment} 现运行 v{version}。重新加载以使用其节点。",
+    "reload": "重新加载",
+    "title": "自定义部署",
+    "unanswered": "Platform 未在此处打开。",
+    "updateDeployment": "更新 {deployment}",
+    "updateShortcut": "按 E 更新它。",
+    "updateUnfinished": "{deployment} 未能完成更新至 v{version}。",
+    "viewDetails": "查看详情"
   },
   "profileMenu": {
     "balanceUnavailable": "无法加载您的余额。",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "收藏",
+    "addMissingModelsToBuild": "将缺失的模型添加到构建中",
     "addToDeploymentBuild": "将这些添加到 Platform 上 {deployment} 的构建中，然后部署新版本。",
     "advancedInputs": "高级输入",
     "askAgent": "询问智能体",
@@ -5153,6 +5228,7 @@
     "viewControls": "视图控制"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "将模型添加到此部署",
     "assets": "资产",
     "backToAssets": "返回所有资产",
     "browseTemplates": "浏览示例模板",
@@ -5336,7 +5412,13 @@
         "open": "打开"
       }
     },
-    "workflows": "工作流"
+    "workflows": "工作流",
+    "workspaceLibrary": {
+      "empty": "你的工作区库中没有模型。",
+      "explainer": "工作区中的模型。不在此构建中的模型会在任务需要时下载。",
+      "loadFailed": "无法加载你的工作区库。",
+      "title": "工作区库"
+    }
   },
   "skillPacks": {
     "errors": {

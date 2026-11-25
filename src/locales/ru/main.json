@@ -166,6 +166,7 @@
     "attach": "Прикрепить файл",
     "attachFiles": "Загрузить изображения или файлы",
     "attachmentCountExceeded": "К одному сообщению можно прикрепить только {count} файлов",
+    "attachmentEmpty": "{name} пуст и не может быть прикреплён",
     "attachmentInvalidVideo": "{name} не является допустимым видеофайлом. Удалите его и попробуйте другой файл.",
     "attachmentNamesOverflow": "{names} и ещё {count}",
     "attachmentTooLarge": "{name} больше {limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} — не поддерживаемый агентом тип файла. Удалите его, чтобы отправить сообщение.",
     "sendBusy": "Сообщение уже отправляется",
     "sendFailed": "Не удалось отправить сообщение",
+    "sendFailedDisownedWorkflow": "Этот рабочий процесс больше недоступен.",
+    "sendFailedNetwork": "Сообщение не дошло до сервера. Проверьте подключение и повторите попытку.",
+    "sendFailedOffscreen": "Не удалось отправить сообщение",
+    "sendFailedOffscreenShow": "Показать",
+    "sendFailedTurnInProgress": "В этом чате всё ещё выполнялся ответ.",
+    "sendFailedUncertain": "Не удалось подтвердить, получил ли сервер ваше сообщение. Проверьте чат, прежде чем отправлять его снова.",
     "sendTurnInProgress": "В этом чате всё ещё выполняется ответ. Дождитесь его завершения или остановите его, затем отправьте сообщение снова.",
+    "sendingMessage": "Отправка…",
     "showChatHistory": "Показать историю чатов",
     "showLess": "Показать меньше",
     "showMore": "Показать больше",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "Использование партнерского узла",
       "apiUsage": "Использование API",
       "creditAdded": "Кредиты добавлены",
-      "gpuUsage": "Использование GPU"
+      "gpuUsage": "Использование GPU",
+      "routerUsage": "Использование роутера"
     },
     "faqs": "Часто задаваемые вопросы",
     "formerMember": "{name} (бывший участник)",
@@ -1516,6 +1525,15 @@
     "member": "Участник",
     "messageSupport": "Связаться с поддержкой",
     "model": "Модель",
+    "personalWallet": {
+      "addCredits": "Добавить личные кредиты",
+      "apiKeyDescription": "Этот ключ списывает средства с вашего личного счёта. Создайте API-ключ команды или добавьте личные кредиты.",
+      "createTeamApiKey": "Создать API-ключ команды",
+      "sessionDescription": "Эта сессия списывает средства с вашего личного счёта. Чтобы списывать средства с команды, переключитесь на её рабочее пространство.",
+      "sessionNoTeamsDescription": "Эта сессия списывает средства с вашего личного счёта. Чтобы продолжить, добавьте личные кредиты.",
+      "switchTo": "Переключиться на {workspaceName}",
+      "title": "На вашем личном счёте закончились кредиты"
+    },
     "purchaseCredits": "Купить кредиты",
     "refreshes": "Обновляется {date}",
     "time": "Время",
@@ -2109,6 +2127,13 @@
         "title": "Ошибка генерации",
         "toastMessage": "Недостаточно памяти GPU. Попробуйте уменьшить разрешение изображения или размер пакета и запустите снова.",
         "toastTitle": "Ошибка генерации"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "Этот запуск был оплачен с вашего личного аккаунта, на котором закончились кредиты.",
+        "title": "Недостаточно кредитов",
+        "toastMessage": "Этот запуск был оплачен с вашего личного аккаунта, на котором закончились кредиты.",
+        "toastTitle": "Недостаточно кредитов"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "Для некоторых узлов требуется более новая версия ComfyUI. Обновитесь, чтобы использовать все узлы.",
     "unknownVersion": "неизвестно"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "Подключено: агент запустил здесь рабочий процесс через Comfy MCP.",
+    "copyConfig": "Копировать",
+    "description": "Позвольте ИИ-агенту, например Claude или Cursor, запускать рабочие процессы в этом ComfyUI через Comfy MCP. Comfy MCP работает на вашем компьютере.",
+    "label": "Агент",
+    "locations": {
+      "claudeDesktop": "Добавьте в claude_desktop_config.json (Настройки > Разработчик > Редактировать конфигурацию), затем перезапустите Claude Desktop.",
+      "cursor": "Добавьте в ~/.cursor/mcp.json или в .cursor/mcp.json в проекте."
+    },
+    "openDocs": "Полное руководство по настройке",
+    "step1": "1. Установите Comfy MCP",
+    "step2": "2. Добавьте его в свой клиент",
+    "step3": "3. Попросите агента запустить рабочий процесс",
+    "step3Hint": "Перезапустите клиент, затем попросите его подтвердить, что ваш локальный ComfyUI запущен, и запустить рабочий процесс. После первого запуска на этой панели появится статус «Подключено».",
+    "title": "Подключите своего ИИ-агента"
+  },
   "logsTerminal": {
     "loadError": "Не удалось загрузить логи, пожалуйста, убедитесь, что вы обновили ваш ComfyUI backend.",
     "resyncError": "Не удалось повторно синхронизировать логи после переподключения backend. Откройте консоль заново, чтобы повторить попытку."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud предложит вам войти в систему.",
       "openOnCloud": "Открыть в Comfy Cloud",
       "ready": "В Comfy Cloud есть все ноды и модели, используемые этим workflow. Он откроется в новой вкладке и будет готов к запуску.",
-      "title": "Запустить в Comfy Cloud"
+      "readyWithUncheckedInputs": "Comfy Cloud содержит все ноды и модели, которые удалось проверить. Не удалось проверить модели для следующих входов: {inputs}. Откроется в новой вкладке.",
+      "title": "Запустить в Comfy Cloud",
+      "uncheckedInput": "{input} на {nodeType}"
     },
     "verifyAccessFailed": "Не удалось проверить доступ к Comfy Cloud",
     "verifyAccessFailedDetail": "Если кнопка Cloud всё ещё доступна, снова выберите «Открыть в Comfy Cloud»."
@@ -4538,6 +4586,32 @@
     "tooltip": "Партнёрские ноды запускают модели с закрытым исходным кодом, такие как Kling или Veo, на оборудовании провайдера через Comfy. Они используют средства; остальная часть Comfy остаётся бесплатной.",
     "unmuteOpen": "Включить звук clip с открытыми весами",
     "unmutePartner": "Включить звук clip партнёрской ноды"
+  },
+  "platformFrame": {
+    "buildFailed": "Сборка не удалась. {deployment} не было развёрнуто.",
+    "buildStep": "шаг {step} из {of}",
+    "buildTakesMinutes": "Это займёт несколько минут. Вы можете продолжать работать.",
+    "building": "Сборка {deployment}",
+    "deployFailed": "Развёртывание не удалось. {deployment} было собрано, но не развёрнуто.",
+    "deploying": "Развёртывание {deployment}",
+    "finishingOnPrevious": "Завершаем вашу задачу на v{version}. | Завершаем {count} ваших задач на v{version}.",
+    "getStarted": "Начать",
+    "later": "Позже",
+    "nothingChanged": "Ничего не изменилось: {deployment} по-прежнему работает на v{version}.",
+    "nothingChangedNoVersion": "Ничего не изменилось: {deployment} по-прежнему работает как раньше.",
+    "openOnPlatform": "Открыть на платформе",
+    "openRunOn": "Открыть «Запуск на»",
+    "preinstallTitle": "Предустановите модели для запуска этого workflow",
+    "readyNew": "{deployment} готово. Выберите его в разделе «Запуск на».",
+    "readyUpdate": "{deployment} теперь работает на v{version}.",
+    "readyUpdateReload": "{deployment} теперь работает на v{version}. Перезагрузите страницу, чтобы использовать его ноды.",
+    "reload": "Перезагрузить",
+    "title": "Пользовательское развёртывание",
+    "unanswered": "Платформа здесь не открылась.",
+    "updateDeployment": "Обновить {deployment}",
+    "updateShortcut": "Нажмите E, чтобы обновить.",
+    "updateUnfinished": "{deployment} не завершило обновление до v{version}.",
+    "viewDetails": "Подробнее"
   },
   "profileMenu": {
     "balanceUnavailable": "Не удалось загрузить ваш баланс.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "В избранное",
+    "addMissingModelsToBuild": "Добавить недостающие модели в сборку",
     "addToDeploymentBuild": "Добавьте их в сборку {deployment} на платформе, затем разверните новый релиз.",
     "advancedInputs": "РАСШИРЕННЫЕ ВХОДНЫЕ ДАННЫЕ",
     "askAgent": "Спросить агента",
@@ -5153,6 +5228,7 @@
     "viewControls": "Управление видом"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "Добавить модели в это развёртывание",
     "assets": "Ассеты",
     "backToAssets": "Назад ко всем ассетам",
     "browseTemplates": "Просмотреть примеры шаблонов",
@@ -5336,7 +5412,13 @@
         "open": "Открыть"
       }
     },
-    "workflows": "Рабочие процессы"
+    "workflows": "Рабочие процессы",
+    "workspaceLibrary": {
+      "empty": "В библиотеке вашего рабочего пространства нет моделей.",
+      "explainer": "Модели в вашем рабочем пространстве. Модели, которых нет в этой сборке, загружаются, когда они нужны для задачи.",
+      "loadFailed": "Не удалось загрузить библиотеку вашего рабочего пространства.",
+      "title": "Библиотека рабочего пространства"
+    }
   },
   "skillPacks": {
     "errors": {

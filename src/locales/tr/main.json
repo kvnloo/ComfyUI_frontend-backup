@@ -166,6 +166,7 @@
     "attach": "Dosya ekle",
     "attachFiles": "Görüntü veya dosya yükleyin",
     "attachmentCountExceeded": "Bir mesaja yalnızca {count} dosya eklenebilir",
+    "attachmentEmpty": "{name} boş olduğundan eklenemedi",
     "attachmentInvalidVideo": "{name} geçerli bir video dosyası değil. Kaldırın ve başka bir dosya deneyin.",
     "attachmentNamesOverflow": "{names} ve {count} dosya daha",
     "attachmentTooLarge": "{name}, {limit} değerinden daha büyük",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name}, aracının kabul ettiği bir dosya türü değil. Göndermek için kaldırın.",
     "sendBusy": "Zaten bir mesaj gönderiliyor",
     "sendFailed": "Mesaj gönderilemedi",
+    "sendFailedDisownedWorkflow": "Bu iş akışı artık kullanılamıyor.",
+    "sendFailedNetwork": "Mesaj sunucuya ulaşmadı. Bağlantınızı kontrol edip tekrar deneyin.",
+    "sendFailedOffscreen": "Mesajınız gönderilemedi",
+    "sendFailedOffscreenShow": "Göster",
+    "sendFailedTurnInProgress": "Bu sohbette bir yanıt hâlâ çalışıyordu.",
+    "sendFailedUncertain": "Sunucunun mesajınızı alıp almadığı doğrulanamadı. Yeniden göndermeden önce sohbetinizi kontrol edin.",
     "sendTurnInProgress": "Bu sohbette hâlâ çalışmakta olan bir yanıt var. Bitmesini bekleyin veya durdurun, ardından tekrar gönderin.",
+    "sendingMessage": "Gönderiliyor…",
     "showChatHistory": "Sohbet geçmişini göster",
     "showLess": "Daha az göster",
     "showMore": "Daha fazlasını göster",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "Partner Node Kullanımı",
       "apiUsage": "API Kullanımı",
       "creditAdded": "Kredi Eklendi",
-      "gpuUsage": "GPU Kullanımı"
+      "gpuUsage": "GPU Kullanımı",
+      "routerUsage": "Yönlendirici Kullanımı"
     },
     "faqs": "SSS",
     "formerMember": "{name} (eski üye)",
@@ -1516,6 +1525,15 @@
     "member": "Üye",
     "messageSupport": "Destek Mesajı",
     "model": "Model",
+    "personalWallet": {
+      "addCredits": "Kişisel kredi ekle",
+      "apiKeyDescription": "Bu anahtar kişisel hesabınızdan ücretlendirilir. Bir takım API anahtarı oluşturun veya kişisel kredi ekleyin.",
+      "createTeamApiKey": "Takım API anahtarı oluştur",
+      "sessionDescription": "Bu oturum kişisel hesabınızdan ücretlendirilir. Bunun yerine bir takımı ücretlendirmek için takımın çalışma alanına geçin.",
+      "sessionNoTeamsDescription": "Bu oturum kişisel hesabınızdan ücretlendirilir. Devam etmek için kişisel kredi ekleyin.",
+      "switchTo": "{workspaceName} çalışma alanına geç",
+      "title": "Kişisel hesabınızın kredisi tükendi"
+    },
     "purchaseCredits": "Kredi Satın Al",
     "refreshes": "{date} tarihinde yenilenir",
     "time": "Zaman",
@@ -2109,6 +2127,13 @@
         "title": "Oluşturma başarısız",
         "toastMessage": "Yeterli GPU belleği yok. Görüntü çözünürlüğünü veya toplu iş boyutunu azaltıp tekrar deneyin.",
         "toastTitle": "Oluşturma başarısız"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "Bu çalıştırma, kredisi tükenmiş kişisel hesabınızdan ücretlendirildi.",
+        "title": "Yetersiz kredi",
+        "toastMessage": "Bu çalıştırma, kredisi tükenmiş kişisel hesabınızdan ücretlendirildi.",
+        "toastTitle": "Yetersiz kredi"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "Bazı düğümler daha yeni bir ComfyUI sürümü gerektiriyor. Tüm düğümleri kullanmak için lütfen güncelleyin.",
     "unknownVersion": "bilinmeyen"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "Bağlı: bir ajan, Comfy MCP aracılığıyla burada bir iş akışı çalıştırdı.",
+    "copyConfig": "Kopyala",
+    "description": "Claude veya Cursor gibi bir yapay zekâ ajanının, Comfy MCP aracılığıyla bu ComfyUI üzerinde iş akışları çalıştırmasına izin verin. Makinenizde çalışır.",
+    "label": "Ajan",
+    "locations": {
+      "claudeDesktop": "claude_desktop_config.json dosyasına ekleyin (Ayarlar > Geliştirici > Yapılandırmayı Düzenle), ardından Claude Desktop'ı yeniden başlatın.",
+      "cursor": "~/.cursor/mcp.json dosyasına veya bir projedeki .cursor/mcp.json dosyasına ekleyin."
+    },
+    "openDocs": "Eksiksiz kurulum kılavuzu",
+    "step1": "1. Comfy MCP'yi yükleyin",
+    "step2": "2. İstemcinize ekleyin",
+    "step3": "3. Ajanınızdan bir iş akışı çalıştırmasını isteyin",
+    "step3Hint": "İstemcinizi yeniden başlatın, ardından yerel ComfyUI'nizin çalıştığını doğrulamasını ve bir iş akışı çalıştırmasını ajanınızdan isteyin. Bu panel, ilk çalıştırmanın ardından Bağlı durumunu gösterir.",
+    "title": "Yapay zekâ ajanınızı bağlayın"
+  },
   "logsTerminal": {
     "loadError": "Kayıtlar yüklenemiyor, lütfen ComfyUI arka ucunuzu güncellediğinizden emin olun.",
     "resyncError": "Arka uç yeniden bağlandıktan sonra kayıtlar yeniden eşitlenemedi. Tekrar denemek için konsolu yeniden açın."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud sizden oturum açmanızı isteyecek.",
       "openOnCloud": "Comfy Cloud'da aç",
       "ready": "Comfy Cloud, bu iş akışının kullandığı tüm düğümlere ve modellere sahip. Çalıştırmaya hazır olarak yeni bir sekmede açılır.",
-      "title": "Comfy Cloud'da çalıştır"
+      "readyWithUncheckedInputs": "Comfy Cloud, kontrol edebildiği tüm düğümlere ve modellere sahip. Şu girdilerin modellerini kontrol edemedi: {inputs}. Yeni bir sekmede açılır.",
+      "title": "Comfy Cloud'da çalıştır",
+      "uncheckedInput": "{nodeType} üzerindeki {input}"
     },
     "verifyAccessFailed": "Comfy Cloud erişimi doğrulanamadı",
     "verifyAccessFailedDetail": "Cloud düğmesi hâlâ kullanılabiliyorsa Comfy Cloud'da Aç'ı tekrar seçin."
@@ -4538,6 +4586,32 @@
     "tooltip": "İş ortağı düğümleri, Kling veya Veo gibi kapalı kaynaklı modelleri Comfy üzerinden sağlayıcının donanımında çalıştırır. Kredileri kullanırlar; Comfy'nin geri kalanı ücretsiz kalır.",
     "unmuteOpen": "Açık ağırlıklı clip sesini aç",
     "unmutePartner": "İş ortağı düğümü clip sesini aç"
+  },
+  "platformFrame": {
+    "buildFailed": "Derleme başarısız oldu. {deployment} dağıtılmadı.",
+    "buildStep": "{of} adımın {step}. adımı",
+    "buildTakesMinutes": "Bu işlem birkaç dakika sürer. Çalışmaya devam edebilirsiniz.",
+    "building": "{deployment} derleniyor",
+    "deployFailed": "Dağıtım başarısız oldu. {deployment} derlendi ancak dağıtılmadı.",
+    "deploying": "{deployment} dağıtılıyor",
+    "finishingOnPrevious": "İşiniz v{version} üzerinde tamamlanıyor. | İşlerinizin {count} kadarı v{version} üzerinde tamamlanıyor.",
+    "getStarted": "Başlayın",
+    "later": "Daha sonra",
+    "nothingChanged": "Hiçbir şey değişmedi: {deployment} hâlâ v{version} çalıştırıyor.",
+    "nothingChangedNoVersion": "Hiçbir şey değişmedi: {deployment} hâlâ eskisi gibi çalışıyor.",
+    "openOnPlatform": "Platform'da Aç",
+    "openRunOn": "Run on'u aç",
+    "preinstallTitle": "Bu iş akışını çalıştırmak için modelleri önceden yükleyin",
+    "readyNew": "{deployment} hazır. Run on altında seçin.",
+    "readyUpdate": "{deployment} artık v{version} çalıştırıyor.",
+    "readyUpdateReload": "{deployment} artık v{version} çalıştırıyor. Düğümlerini kullanmak için yeniden yükleyin.",
+    "reload": "Yeniden yükle",
+    "title": "Özel dağıtım",
+    "unanswered": "Platform burada açılmadı.",
+    "updateDeployment": "{deployment} öğesini güncelle",
+    "updateShortcut": "Güncellemek için E tuşuna basın.",
+    "updateUnfinished": "{deployment}, v{version} sürümüne güncellemeyi tamamlamadı.",
+    "viewDetails": "Ayrıntıları görüntüle"
   },
   "profileMenu": {
     "balanceUnavailable": "Bakiyeniz yüklenemedi.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "Favorilere Ekle",
+    "addMissingModelsToBuild": "Eksik modelleri derlemeye ekle",
     "addToDeploymentBuild": "Bunları Platform'da {deployment}'ın derlemesine ekleyin, ardından yeni bir sürüm dağıtın.",
     "advancedInputs": "GELİŞMİŞ GİRDİLER",
     "askAgent": "Aracıya sor",
@@ -5153,6 +5228,7 @@
     "viewControls": "Görünüm Kontrolleri"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "Modelleri bu dağıtıma ekle",
     "assets": "Varlıklar",
     "backToAssets": "Tüm varlıklara dön",
     "browseTemplates": "Örnek şablonlara göz atın",
@@ -5336,7 +5412,13 @@
         "open": "Açık"
       }
     },
-    "workflows": "İş Akışları"
+    "workflows": "İş Akışları",
+    "workspaceLibrary": {
+      "empty": "Çalışma alanı kitaplığınızda model yok.",
+      "explainer": "Çalışma alanınızdaki modeller. Bu derlemede olmayanlar, bir iş gerektirdiğinde indirilir.",
+      "loadFailed": "Çalışma alanı kitaplığınız yüklenemedi.",
+      "title": "Çalışma alanı kitaplığı"
+    }
   },
   "skillPacks": {
     "errors": {

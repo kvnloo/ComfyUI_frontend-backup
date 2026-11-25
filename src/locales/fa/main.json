@@ -166,6 +166,7 @@
     "attach": "پیوست کردن فایل",
     "attachFiles": "تصاویر یا فایل‌ها را بارگذاری کنید",
     "attachmentCountExceeded": "فقط می‌توان {count} فایل را به یک پیام پیوست کرد",
+    "attachmentEmpty": "{name} خالی است و نمی‌توان آن را پیوست کرد",
     "attachmentInvalidVideo": "{name} یک فایل ویدیویی معتبر نیست. آن را حذف کنید و فایل دیگری را امتحان کنید.",
     "attachmentNamesOverflow": "{names} و {count} مورد دیگر",
     "attachmentTooLarge": "{name} بزرگ‌تر از {limit} است",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} از نوع فایل‌های پذیرفته‌شده توسط عامل نیست. برای ارسال، آن را حذف کنید.",
     "sendBusy": "پیامی در حال ارسال است",
     "sendFailed": "ارسال پیام ناموفق بود",
+    "sendFailedDisownedWorkflow": "این workflow دیگر در دسترس نیست.",
+    "sendFailedNetwork": "پیام به سرور نرسید. اتصال خود را بررسی کنید و دوباره تلاش کنید.",
+    "sendFailedOffscreen": "پیام شما ارسال نشد",
+    "sendFailedOffscreenShow": "نمایش",
+    "sendFailedTurnInProgress": "پاسخی هنوز در این گفت‌وگو در حال اجرا بود.",
+    "sendFailedUncertain": "تأیید نشد که سرور پیام شما را دریافت کرده است یا نه. پیش از ارسال دوباره، گفت‌وگوی خود را بررسی کنید.",
     "sendTurnInProgress": "این چت همچنان در حال دریافت پاسخ است. صبر کنید تا تمام شود، یا آن را متوقف کنید، سپس دوباره ارسال کنید.",
+    "sendingMessage": "در حال ارسال…",
     "showChatHistory": "نمایش تاریخچهٔ گفتگو",
     "showLess": "نمایش کمتر",
     "showMore": "نمایش بیشتر",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "استفاده از Node شریک",
       "apiUsage": "استفاده از API",
       "creditAdded": "اعتبار افزوده شد",
-      "gpuUsage": "استفاده از GPU"
+      "gpuUsage": "استفاده از GPU",
+      "routerUsage": "استفاده از روتر"
     },
     "faqs": "سؤالات متداول",
     "formerMember": "{name} (عضو پیشین)",
@@ -1516,6 +1525,15 @@
     "member": "عضو",
     "messageSupport": "پشتیبانی پیامکی",
     "model": "مدل",
+    "personalWallet": {
+      "addCredits": "افزودن اعتبار شخصی",
+      "apiKeyDescription": "هزینهٔ این کلید از حساب شخصی شما کسر می‌شود. یک کلید API تیم ایجاد کنید یا اعتبار شخصی اضافه کنید.",
+      "createTeamApiKey": "ایجاد کلید API تیم",
+      "sessionDescription": "هزینهٔ این نشست از حساب شخصی شما کسر می‌شود. برای کسر هزینه از یک تیم، به فضای کاری آن بروید.",
+      "sessionNoTeamsDescription": "هزینهٔ این نشست از حساب شخصی شما کسر می‌شود. برای ادامه، اعتبار شخصی اضافه کنید.",
+      "switchTo": "تغییر به {workspaceName}",
+      "title": "اعتبار حساب شخصی شما تمام شده است"
+    },
     "purchaseCredits": "خرید اعتبار",
     "refreshes": "به‌روزرسانی {date}",
     "time": "زمان",
@@ -2109,6 +2127,13 @@
         "title": "تولید ناموفق بود",
         "toastMessage": "حافظه GPU کافی نیست. وضوح تصویر یا اندازه دسته را کاهش دهید و دوباره اجرا کنید.",
         "toastTitle": "تولید ناموفق بود"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "هزینهٔ این اجرا از حساب شخصی شما کسر شد که اعتبار کافی ندارد.",
+        "title": "اعتبار ناکافی",
+        "toastMessage": "هزینهٔ این اجرا از حساب شخصی شما کسر شد که اعتبار کافی ندارد.",
+        "toastTitle": "اعتبار ناکافی"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "برخی nodeها به نسخه جدیدتری از ComfyUI نیاز دارند. برای استفاده از همه nodeها، لطفاً به‌روزرسانی کنید.",
     "unknownVersion": "نامشخص"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "متصل: یک عامل از طریق Comfy MCP در اینجا یک workflow اجرا کرده است.",
+    "copyConfig": "کپی",
+    "description": "به یک عامل هوش مصنوعی مانند Claude یا Cursor اجازه دهید از طریق Comfy MCP، workflowها را در این ComfyUI اجرا کند. این ابزار روی دستگاه شما اجرا می‌شود.",
+    "label": "عامل",
+    "locations": {
+      "claudeDesktop": "آن را به claude_desktop_config.json اضافه کنید (تنظیمات > توسعه‌دهنده > ویرایش پیکربندی)، سپس Claude Desktop را بازراه‌اندازی کنید.",
+      "cursor": "آن را به ~/.cursor/mcp.json یا .cursor/mcp.json در یک پروژه اضافه کنید."
+    },
+    "openDocs": "راهنمای کامل راه‌اندازی",
+    "step1": "۱. Comfy MCP را نصب کنید",
+    "step2": "۲. آن را به کلاینت خود اضافه کنید",
+    "step3": "۳. از عامل خود بخواهید یک workflow اجرا کند",
+    "step3Hint": "کلاینت خود را بازراه‌اندازی کنید، سپس از آن بخواهید تأیید کند که ComfyUI محلی شما در حال اجرا است و یک workflow اجرا کند. این پنل پس از اولین اجرا، «متصل» را نشان می‌دهد.",
+    "title": "عامل هوش مصنوعی خود را متصل کنید"
+  },
   "logsTerminal": {
     "loadError": "امکان بارگذاری لاگ‌ها وجود ندارد، لطفاً اطمینان حاصل کنید که ComfyUI backend خود را به‌روزرسانی کرده‌اید.",
     "resyncError": "امکان همگام‌سازی مجدد لاگ‌ها پس از اتصال مجدد backend وجود ندارد. برای تلاش مجدد، کنسول را دوباره باز کنید."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud از شما می‌خواهد وارد شوید.",
       "openOnCloud": "باز کردن در Comfy Cloud",
       "ready": "Comfy Cloud همه nodeها و مدل‌هایی را که این workflow استفاده می‌کند دارد. در یک تب جدید و آماده اجرا باز می‌شود.",
-      "title": "اجرا در Comfy Cloud"
+      "readyWithUncheckedInputs": "Comfy Cloud همهٔ nodeها و مدل‌هایی را که می‌توانست بررسی کند، دارد. مدل‌های مربوط به این ورودی‌ها قابل بررسی نبودند: {inputs}. این مورد در یک زبانهٔ جدید باز می‌شود.",
+      "title": "اجرا در Comfy Cloud",
+      "uncheckedInput": "{input} در {nodeType}"
     },
     "verifyAccessFailed": "تأیید دسترسی به Comfy Cloud ممکن نشد",
     "verifyAccessFailedDetail": "اگر دکمهٔ Cloud همچنان در دسترس است، دوباره Open on Comfy Cloud را انتخاب کنید."
@@ -4538,6 +4586,32 @@
     "tooltip": "گره‌های شریک مدل‌های متن‌بسته‌ای مانند Kling یا Veo را از طریق Comfy و روی سخت‌افزار ارائه‌دهنده اجرا می‌کنند. آن‌ها از اعتبار استفاده می‌کنند؛ سایر بخش‌های Comfy رایگان می‌مانند.",
     "unmuteOpen": "باصدا کردن clip وزن‌باز",
     "unmutePartner": "باصدا کردن clip گره شریک"
+  },
+  "platformFrame": {
+    "buildFailed": "ساخت ناموفق بود. {deployment} مستقر نشد.",
+    "buildStep": "گام {step} از {of}",
+    "buildTakesMinutes": "این کار چند دقیقه طول می‌کشد. می‌توانید به کار ادامه دهید.",
+    "building": "در حال ساخت {deployment}",
+    "deployFailed": "استقرار ناموفق بود. {deployment} ساخته شد، اما مستقر نشد.",
+    "deploying": "در حال استقرار {deployment}",
+    "finishingOnPrevious": "در حال تکمیل کار شما در v{version}. | در حال تکمیل {count} مورد از کارهای شما در v{version}.",
+    "getStarted": "شروع کنید",
+    "later": "بعداً",
+    "nothingChanged": "تغییری نکرد: {deployment} همچنان v{version} را اجرا می‌کند.",
+    "nothingChangedNoVersion": "تغییری نکرد: {deployment} همچنان مانند قبل اجرا می‌شود.",
+    "openOnPlatform": "باز کردن در پلتفرم",
+    "openRunOn": "باز کردن «اجرا در»",
+    "preinstallTitle": "برای اجرای این workflow، مدل‌ها را از پیش نصب کنید",
+    "readyNew": "{deployment} آماده است. آن را از بخش «اجرا در» انتخاب کنید.",
+    "readyUpdate": "{deployment} اکنون v{version} را اجرا می‌کند.",
+    "readyUpdateReload": "{deployment} اکنون v{version} را اجرا می‌کند. برای استفاده از nodeهای آن، بازبارگیری کنید.",
+    "reload": "بازبارگیری",
+    "title": "استقرار سفارشی",
+    "unanswered": "پلتفرم در اینجا باز نشد.",
+    "updateDeployment": "به‌روزرسانی {deployment}",
+    "updateShortcut": "برای به‌روزرسانی آن، E را فشار دهید.",
+    "updateUnfinished": "به‌روزرسانی {deployment} به v{version} کامل نشد.",
+    "viewDetails": "مشاهدهٔ جزئیات"
   },
   "profileMenu": {
     "balanceUnavailable": "نتوانستیم موجودی شما را بارگذاری کنیم.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "افزودن به علاقه‌مندی‌ها",
+    "addMissingModelsToBuild": "افزودن مدل‌های مفقود به ساخت",
     "addToDeploymentBuild": "این موارد را به بیلد {deployment} در پلتفرم اضافه کنید، سپس یک انتشار جدید مستقر کنید.",
     "advancedInputs": "ورودی‌های پیشرفته",
     "askAgent": "از agent بپرسید",
@@ -5153,6 +5228,7 @@
     "viewControls": "کنترل‌های نمایش"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "افزودن مدل‌ها به این استقرار",
     "assets": "دارایی‌ها",
     "backToAssets": "بازگشت به همه دارایی‌ها",
     "browseTemplates": "مرور قالب‌های نمونه",
@@ -5336,7 +5412,13 @@
         "open": "باز"
       }
     },
-    "workflows": "Workflowها"
+    "workflows": "Workflowها",
+    "workspaceLibrary": {
+      "empty": "هیچ مدلی در کتابخانهٔ فضای کاری شما وجود ندارد.",
+      "explainer": "مدل‌های موجود در فضای کاری شما. مدل‌هایی که در این ساخت نیستند، هنگام نیاز یک کار به آن‌ها دانلود می‌شوند.",
+      "loadFailed": "بارگیری کتابخانهٔ فضای کاری شما ممکن نشد.",
+      "title": "کتابخانهٔ فضای کاری"
+    }
   },
   "skillPacks": {
     "errors": {

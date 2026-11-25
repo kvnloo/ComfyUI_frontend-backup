@@ -166,6 +166,7 @@
     "attach": "附加檔案",
     "attachFiles": "上傳影像或檔案",
     "attachmentCountExceeded": "一則訊息只能附加 {count} 個檔案",
+    "attachmentEmpty": "{name}是空的，因此無法附加",
     "attachmentInvalidVideo": "{name} 不是有效的影片檔案。請移除它，然後嘗試其他檔案。",
     "attachmentNamesOverflow": "{names} 和另外 {count} 個",
     "attachmentTooLarge": "{name} 大於 {limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} 不是代理可接受的檔案類型。請移除後再傳送。",
     "sendBusy": "已有訊息正在傳送",
     "sendFailed": "訊息傳送失敗",
+    "sendFailedDisownedWorkflow": "此工作流程已無法使用。",
+    "sendFailedNetwork": "訊息未傳送至伺服器。請檢查您的連線後再試一次。",
+    "sendFailedOffscreen": "無法傳送您的訊息",
+    "sendFailedOffscreenShow": "顯示",
+    "sendFailedTurnInProgress": "此聊天中的回覆仍在執行中。",
+    "sendFailedUncertain": "無法確認伺服器是否已收到您的訊息。再次傳送前請先檢查聊天內容。",
     "sendTurnInProgress": "此聊天仍有回覆正在執行。請等待其完成，或將其停止後再傳送。",
+    "sendingMessage": "正在傳送…",
     "showChatHistory": "顯示聊天記錄",
     "showLess": "顯示更少",
     "showMore": "顯示更多",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "合作夥伴節點使用量",
       "apiUsage": "API 使用量",
       "creditAdded": "已新增點數",
-      "gpuUsage": "GPU 使用量"
+      "gpuUsage": "GPU 使用量",
+      "routerUsage": "路由用量"
     },
     "faqs": "常見問題",
     "formerMember": "{name}（前成員）",
@@ -1516,6 +1525,15 @@
     "member": "成員",
     "messageSupport": "聯絡客服",
     "model": "模型",
+    "personalWallet": {
+      "addCredits": "新增個人點數",
+      "apiKeyDescription": "此金鑰將向您的個人帳戶計費。請建立團隊 API 金鑰或新增個人點數。",
+      "createTeamApiKey": "建立團隊 API 金鑰",
+      "sessionDescription": "此工作階段將向您的個人帳戶計費。若要改為向團隊計費，請切換至該團隊的工作區。",
+      "sessionNoTeamsDescription": "此工作階段將向您的個人帳戶計費。請新增個人點數以繼續。",
+      "switchTo": "切換至 {workspaceName}",
+      "title": "您的個人帳戶點數已用盡"
+    },
     "purchaseCredits": "購買點數",
     "refreshes": "將於 {date} 重置",
     "time": "時間",
@@ -2109,6 +2127,13 @@
         "title": "生成失敗",
         "toastMessage": "GPU 記憶體不足。請嘗試降低圖片解析度或批次大小後再執行。",
         "toastTitle": "生成失敗"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "此次執行的費用已計入您的個人帳戶，但該帳戶點數不足。",
+        "title": "點數不足",
+        "toastMessage": "此次執行的費用已計入您的個人帳戶，但該帳戶點數不足。",
+        "toastTitle": "點數不足"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "部分節點需要較新版本的 ComfyUI。請更新以使用所有節點。",
     "unknownVersion": "未知"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "已連線：已有代理程式透過 Comfy MCP 在此處執行過工作流程。",
+    "copyConfig": "複製",
+    "description": "讓 Claude 或 Cursor 等 AI 代理程式透過 Comfy MCP 在此 ComfyUI 上執行工作流程。它會在您的電腦上執行。",
+    "label": "代理程式",
+    "locations": {
+      "claudeDesktop": "新增至 claude_desktop_config.json（設定 > 開發人員 > 編輯設定），然後重新啟動 Claude Desktop。",
+      "cursor": "新增至 ~/.cursor/mcp.json，或專案中的 .cursor/mcp.json。"
+    },
+    "openDocs": "完整設定指南",
+    "step1": "1. 安裝 Comfy MCP",
+    "step2": "2. 將其新增至您的用戶端",
+    "step3": "3. 請您的代理程式執行工作流程",
+    "step3Hint": "重新啟動您的用戶端，然後要求它確認本機 ComfyUI 正在執行並執行工作流程。首次執行後，此面板會顯示「已連線」。",
+    "title": "連線您的 AI 代理程式"
+  },
   "logsTerminal": {
     "loadError": "無法載入日誌，請確認您已更新 ComfyUI 後端。",
     "resyncError": "後端重新連線後無法重新同步日誌。請重新開啟主控台以重試。"
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud 會要求您登入。",
       "openOnCloud": "在 Comfy Cloud 開啟",
       "ready": "Comfy Cloud 擁有此工作流程所使用的每個節點與模型。它會在新分頁中開啟，並已可執行。",
-      "title": "在 Comfy Cloud 上執行"
+      "readyWithUncheckedInputs": "Comfy Cloud 已具備所有可檢查的節點與模型。它無法檢查這些輸入所使用的模型：{inputs}。將在新分頁中開啟。",
+      "title": "在 Comfy Cloud 上執行",
+      "uncheckedInput": "{nodeType} 上的 {input}"
     },
     "verifyAccessFailed": "無法驗證 Comfy Cloud 的存取權限",
     "verifyAccessFailedDetail": "如果 Cloud 按鈕仍可使用，請再次選取「在 Comfy Cloud 上開啟」。"
@@ -4538,6 +4586,32 @@
     "tooltip": "合作夥伴節點透過 Comfy 在供應商的硬體上執行 Kling 或 Veo 等封閉原始碼模型。它們使用點數；Comfy 的其餘部分維持免費。",
     "unmuteOpen": "取消開放權重 clip 靜音",
     "unmutePartner": "取消合作夥伴節點 clip 靜音"
+  },
+  "platformFrame": {
+    "buildFailed": "建置失敗。{deployment} 未部署。",
+    "buildStep": "第 {step} 步，共 {of} 步",
+    "buildTakesMinutes": "這需要幾分鐘。您可以繼續工作。",
+    "building": "正在建置 {deployment}",
+    "deployFailed": "部署失敗。{deployment} 已建置，但未部署。",
+    "deploying": "正在部署 {deployment}",
+    "finishingOnPrevious": "正在 v{version} 上完成您的工作。 | 正在 v{version} 上完成您 {count} 個工作。",
+    "getStarted": "開始使用",
+    "later": "稍後",
+    "nothingChanged": "沒有變更：{deployment} 仍執行 v{version}。",
+    "nothingChangedNoVersion": "沒有變更：{deployment} 仍照常執行。",
+    "openOnPlatform": "在平台中開啟",
+    "openRunOn": "開啟「執行於」",
+    "preinstallTitle": "預先安裝模型以執行此工作流程",
+    "readyNew": "{deployment} 已準備就緒。請在「執行於」下方選擇它。",
+    "readyUpdate": "{deployment} 現在執行 v{version}。",
+    "readyUpdateReload": "{deployment} 現在執行 v{version}。重新載入以使用其節點。",
+    "reload": "重新載入",
+    "title": "自訂部署",
+    "unanswered": "平台未在此處開啟。",
+    "updateDeployment": "更新 {deployment}",
+    "updateShortcut": "按 E 以更新它。",
+    "updateUnfinished": "{deployment} 未完成更新至 v{version}。",
+    "viewDetails": "檢視詳細資料"
   },
   "profileMenu": {
     "balanceUnavailable": "無法載入您的餘額。",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "收藏",
+    "addMissingModelsToBuild": "將缺少的模型新增至建置",
     "addToDeploymentBuild": "請將這些項目新增至平台上 {deployment} 的建置，然後部署新的版本。",
     "advancedInputs": "進階輸入",
     "askAgent": "詢問代理程式",
@@ -5153,6 +5228,7 @@
     "viewControls": "檢視控制"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "將模型新增至此部署",
     "assets": "資源",
     "backToAssets": "返回所有資源",
     "browseTemplates": "瀏覽範例模板",
@@ -5336,7 +5412,13 @@
         "open": "開啟"
       }
     },
-    "workflows": "工作流程"
+    "workflows": "工作流程",
+    "workspaceLibrary": {
+      "empty": "您的工作區庫中沒有模型。",
+      "explainer": "工作區中的模型。不在此建置中的模型會在工作需要時下載。",
+      "loadFailed": "無法載入您的工作區庫。",
+      "title": "工作區庫"
+    }
   },
   "skillPacks": {
     "errors": {

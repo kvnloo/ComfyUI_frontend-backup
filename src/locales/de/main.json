@@ -166,6 +166,7 @@
     "attach": "Datei anhängen",
     "attachFiles": "Laden Sie Bilder oder Dateien hoch",
     "attachmentCountExceeded": "An eine Nachricht können nur {count} Dateien angehängt werden",
+    "attachmentEmpty": "{name} ist leer und konnte nicht angehängt werden",
     "attachmentInvalidVideo": "{name} ist keine gültige Videodatei. Entfernen Sie sie und versuchen Sie es mit einer anderen Datei.",
     "attachmentNamesOverflow": "{names} und {count} weitere",
     "attachmentTooLarge": "{name} ist größer als {limit}",
@@ -444,7 +445,14 @@
     "sendBlockedByUnsupportedType": "{name} ist kein Dateityp, den der Agent akzeptiert. Entfernen Sie die Datei, um sie zu senden.",
     "sendBusy": "Eine Nachricht wird bereits gesendet",
     "sendFailed": "Nachricht konnte nicht gesendet werden",
+    "sendFailedDisownedWorkflow": "Dieser Workflow ist nicht mehr verfügbar.",
+    "sendFailedNetwork": "Die Nachricht hat den Server nicht erreicht. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "sendFailedOffscreen": "Ihre Nachricht konnte nicht gesendet werden",
+    "sendFailedOffscreenShow": "Anzeigen",
+    "sendFailedTurnInProgress": "In diesem Chat wurde noch eine Antwort ausgeführt.",
+    "sendFailedUncertain": "Es konnte nicht bestätigt werden, ob der Server Ihre Nachricht erhalten hat. Prüfen Sie Ihren Chat, bevor Sie sie erneut senden.",
     "sendTurnInProgress": "In diesem Chat wird noch eine Antwort generiert. Warten Sie, bis sie abgeschlossen ist, oder stoppen Sie sie und senden Sie dann erneut.",
+    "sendingMessage": "Wird gesendet …",
     "showChatHistory": "Chatverlauf anzeigen",
     "showLess": "Weniger anzeigen",
     "showMore": "Mehr anzeigen",
@@ -1499,7 +1507,8 @@
       "apiNodeUsage": "Nutzung von Partner-Nodes",
       "apiUsage": "API-Nutzung",
       "creditAdded": "Credits hinzugefügt",
-      "gpuUsage": "GPU-Nutzung"
+      "gpuUsage": "GPU-Nutzung",
+      "routerUsage": "Router-Nutzung"
     },
     "faqs": "Häufig gestellte Fragen",
     "formerMember": "{name} (ehemaliges Mitglied)",
@@ -1516,6 +1525,15 @@
     "member": "Mitglied",
     "messageSupport": "Support kontaktieren",
     "model": "Modell",
+    "personalWallet": {
+      "addCredits": "Persönliche Credits hinzufügen",
+      "apiKeyDescription": "Dieser Schlüssel belastet Ihr persönliches Konto. Erstellen Sie einen Team-API-Schlüssel oder fügen Sie persönliche Credits hinzu.",
+      "createTeamApiKey": "Team-API-Schlüssel erstellen",
+      "sessionDescription": "Für diese Sitzung wird Ihr persönliches Konto belastet. Um stattdessen ein Team zu belasten, wechseln Sie zu dessen Arbeitsbereich.",
+      "sessionNoTeamsDescription": "Für diese Sitzung wird Ihr persönliches Konto belastet. Fügen Sie persönliche Credits hinzu, um fortzufahren.",
+      "switchTo": "Zu {workspaceName} wechseln",
+      "title": "Ihrem persönlichen Konto sind die Credits ausgegangen"
+    },
     "purchaseCredits": "Credits kaufen",
     "refreshes": "Wird am {date} aktualisiert",
     "time": "Zeit",
@@ -2109,6 +2127,13 @@
         "title": "Generierung fehlgeschlagen",
         "toastMessage": "Nicht genügend GPU-Speicher. Versuchen Sie, Bildauflösung oder Batchgröße zu verringern, und führen Sie die Ausführung erneut durch.",
         "toastTitle": "Generierung fehlgeschlagen"
+      },
+      "personal_wallet_insufficient_credits": {
+        "itemLabel": "{nodeName}",
+        "message": "Dieser Durchlauf hat Ihr persönliches Konto belastet, das keine Credits mehr hat.",
+        "title": "Nicht genügend Credits",
+        "toastMessage": "Dieser Durchlauf hat Ihr persönliches Konto belastet, das keine Credits mehr hat.",
+        "toastTitle": "Nicht genügend Credits"
       },
       "preprocessing_failed": {
         "itemLabel": "{nodeName}",
@@ -3456,6 +3481,27 @@
     "newerVersionRequiredGeneric": "Einige Nodes erfordern eine neuere Version von ComfyUI. Bitte aktualisieren Sie, um alle Nodes zu verwenden.",
     "unknownVersion": "unbekannt"
   },
+  "localMcp": {
+    "clients": {
+      "claudeCode": "Claude Code",
+      "claudeDesktop": "Claude Desktop",
+      "cursor": "Cursor"
+    },
+    "connected": "Verbunden: Ein Agent hat hier über Comfy MCP einen Workflow ausgeführt.",
+    "copyConfig": "Kopieren",
+    "description": "Lassen Sie einen AI-Agenten wie Claude oder Cursor über Comfy MCP Workflows auf diesem ComfyUI ausführen. Es läuft auf Ihrem Computer.",
+    "label": "Agent",
+    "locations": {
+      "claudeDesktop": "Zu claude_desktop_config.json hinzufügen (Einstellungen > Entwickler > Konfiguration bearbeiten) und dann Claude Desktop neu starten.",
+      "cursor": "Zu ~/.cursor/mcp.json oder in einem Projekt zu .cursor/mcp.json hinzufügen."
+    },
+    "openDocs": "Vollständige Einrichtungsanleitung",
+    "step1": "1. Comfy MCP installieren",
+    "step2": "2. Zu Ihrem Client hinzufügen",
+    "step3": "3. Bitten Sie Ihren Agenten, einen Workflow auszuführen",
+    "step3Hint": "Starten Sie Ihren Client neu und bitten Sie ihn dann, zu bestätigen, dass Ihr lokales ComfyUI läuft, und einen Workflow auszuführen. Nach dem ersten Durchlauf wird in diesem Bereich „Verbunden“ angezeigt.",
+    "title": "Verbinden Sie Ihren AI-Agenten"
+  },
   "logsTerminal": {
     "loadError": "Protokolle können nicht geladen werden. Bitte stellen Sie sicher, dass Sie Ihr ComfyUI-Backend aktualisiert haben.",
     "resyncError": "Die Protokolle konnten nach der Wiederverbindung mit dem Backend nicht erneut synchronisiert werden. Öffnen Sie die Konsole erneut, um es wieder zu versuchen."
@@ -4481,7 +4527,9 @@
       "asksToSignIn": "Comfy Cloud wird Sie zur Anmeldung auffordern.",
       "openOnCloud": "Auf Comfy Cloud öffnen",
       "ready": "Comfy Cloud verfügt über jeden Node und jedes Modell, die dieser Workflow verwendet. Er wird in einem neuen Tab geöffnet und ist bereit zum Ausführen.",
-      "title": "Auf Comfy Cloud ausführen"
+      "readyWithUncheckedInputs": "Comfy Cloud enthält jeden Node und jedes Modell, das geprüft werden konnte. Die Modelle für diese Eingaben konnten nicht geprüft werden: {inputs}. Comfy Cloud wird in einem neuen Tab geöffnet.",
+      "title": "Auf Comfy Cloud ausführen",
+      "uncheckedInput": "{input} bei {nodeType}"
     },
     "verifyAccessFailed": "Zugriff auf Comfy Cloud konnte nicht überprüft werden",
     "verifyAccessFailedDetail": "Wenn die Cloud-Schaltfläche weiterhin verfügbar ist, wählen Sie erneut „In Comfy Cloud öffnen“."
@@ -4538,6 +4586,32 @@
     "tooltip": "Partner-Nodes führen Closed-Source-Modelle wie Kling oder Veo auf der Hardware des Anbieters über Comfy aus. Sie verwenden Credits; der Rest von Comfy bleibt kostenlos.",
     "unmuteOpen": "Stummschaltung des Open-Weights-Clips aufheben",
     "unmutePartner": "Stummschaltung des Partner-Node-Clips aufheben"
+  },
+  "platformFrame": {
+    "buildFailed": "Build fehlgeschlagen. {deployment} wurde nicht bereitgestellt.",
+    "buildStep": "Schritt {step} von {of}",
+    "buildTakesMinutes": "Dies dauert einige Minuten. Sie können weiterarbeiten.",
+    "building": "{deployment} wird erstellt",
+    "deployFailed": "Bereitstellung fehlgeschlagen. {deployment} wurde erstellt, aber nicht bereitgestellt.",
+    "deploying": "{deployment} wird bereitgestellt",
+    "finishingOnPrevious": "Ihr Job wird mit v{version} abgeschlossen. | {count} Ihrer Jobs werden mit v{version} abgeschlossen.",
+    "getStarted": "Loslegen",
+    "later": "Später",
+    "nothingChanged": "Keine Änderungen: {deployment} läuft weiterhin mit v{version}.",
+    "nothingChangedNoVersion": "Keine Änderungen: {deployment} läuft weiterhin wie zuvor.",
+    "openOnPlatform": "Auf der Plattform öffnen",
+    "openRunOn": "„Ausführen auf“ öffnen",
+    "preinstallTitle": "Installieren Sie Modelle vorab, um diesen Workflow auszuführen",
+    "readyNew": "{deployment} ist bereit. Wählen Sie es unter „Ausführen auf“ aus.",
+    "readyUpdate": "{deployment} läuft jetzt mit v{version}.",
+    "readyUpdateReload": "{deployment} läuft jetzt mit v{version}. Laden Sie neu, um seine Nodes zu verwenden.",
+    "reload": "Neu laden",
+    "title": "Benutzerdefiniertes Deployment",
+    "unanswered": "Die Plattform wurde hier nicht geöffnet.",
+    "updateDeployment": "{deployment} aktualisieren",
+    "updateShortcut": "Drücken Sie E, um es zu aktualisieren.",
+    "updateUnfinished": "{deployment} wurde nicht vollständig auf v{version} aktualisiert.",
+    "viewDetails": "Details anzeigen"
   },
   "profileMenu": {
     "balanceUnavailable": "Ihr Guthaben konnte nicht geladen werden.",
@@ -4637,6 +4711,7 @@
   },
   "rightSidePanel": {
     "addFavorite": "Favorit",
+    "addMissingModelsToBuild": "Fehlende Modelle zum Build hinzufügen",
     "addToDeploymentBuild": "Fügen Sie diese zum Build von {deployment} auf Platform hinzu und stellen Sie dann ein neues Release bereit.",
     "advancedInputs": "ERWEITERTE EINGÄNGE",
     "askAgent": "Agent fragen",
@@ -5153,6 +5228,7 @@
     "viewControls": "Ansichtssteuerung"
   },
   "sideToolbar": {
+    "addModelsToDeployment": "Modelle zu diesem Deployment hinzufügen",
     "assets": "Assets",
     "backToAssets": "Zurück zu allen Assets",
     "browseTemplates": "Beispielvorlagen durchsuchen",
@@ -5336,7 +5412,13 @@
         "open": "Geöffnet"
       }
     },
-    "workflows": "Workflows"
+    "workflows": "Workflows",
+    "workspaceLibrary": {
+      "empty": "Keine Modelle in Ihrer Arbeitsbereich-Bibliothek.",
+      "explainer": "Modelle in Ihrem Arbeitsbereich. Modelle, die nicht in diesem Build enthalten sind, werden heruntergeladen, wenn ein Job sie benötigt.",
+      "loadFailed": "Ihre Arbeitsbereich-Bibliothek konnte nicht geladen werden.",
+      "title": "Bibliothek des Arbeitsbereichs"
+    }
   },
   "skillPacks": {
     "errors": {
