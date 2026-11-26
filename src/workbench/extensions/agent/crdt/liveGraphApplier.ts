@@ -1089,12 +1089,22 @@ function isUnregisteredPlaceholder(node: LGraphNode): boolean {
   )
 }
 
+const MISSING_NODE_PLACEHOLDER = Symbol('missingNodePlaceholder')
+
+function isResolvablePlaceholder(node: LGraphNode): boolean {
+  return (
+    Reflect.get(node, MISSING_NODE_PLACEHOLDER) === true &&
+    Object.hasOwn(LiteGraph.registered_node_types, node.type)
+  )
+}
+
 function missingNode(docNode: DocNode): LGraphNode {
   const node = new LGraphNode(
     docNode.serialised.title || docNode.type || 'Missing Node',
     docNode.type
   )
   node.has_errors = true
+  Reflect.set(node, MISSING_NODE_PLACEHOLDER, true)
   return node
 }
 
@@ -1448,7 +1458,7 @@ export class LiveGraphApplier {
     const docNode = this.readDocNode(doc, id)
     if (!docNode) return 'skipped'
     const live = graph.getNodeById(toNodeId(id))
-    if (live && live.type === docNode.type) {
+    if (live && live.type === docNode.type && !isResolvablePlaceholder(live)) {
       this.applyFields(live, docNode)
       if (docNode.widgetRecord) restoreWidgetRecord(live, docNode.widgetRecord)
       else this.applyWidgets(live, docNode.widgets, mode)
