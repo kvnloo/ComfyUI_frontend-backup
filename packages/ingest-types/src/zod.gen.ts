@@ -2435,9 +2435,12 @@ export const zCccStaffPermissions = z.object({
   display_name: z.string().max(200).optional(),
   updated_at: z.iso.datetime(),
   updated_by: z.string(),
-  version: z.coerce.bigint().gte(BigInt(1)).max(BigInt('9223372036854775807'), {
-    error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
-  })
+  version: z.coerce
+    .bigint()
+    .gte(BigInt(1))
+    .max(BigInt('9223372036854775807'), {
+      error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
+    })
 })
 
 export const zCccStagingMediaUse = z.object({
@@ -7926,10 +7929,6 @@ export const zGetFeaturesResponse = z.object({
     ])
     .optional()
     .default('control'),
-  'agent-starter-prompt-set': z
-    .enum(['control', 'test'])
-    .optional()
-    .default('control'),
   agent_gratis_local_arm: z.enum(['control', 'treatment']).optional(),
   billing_web_url: z.string().optional(),
   can_run_partner_nodes: z.boolean().optional(),
@@ -9309,9 +9308,12 @@ export const zGetCccPublicCacheAuthorityResponse = z.object({
 })
 
 export const zGetCccRevisionItemPath = z.object({
-  rev: z.coerce.bigint().gte(BigInt(1)).max(BigInt('9223372036854775807'), {
-    error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
-  }),
+  rev: z.coerce
+    .bigint()
+    .gte(BigInt(1))
+    .max(BigInt('9223372036854775807'), {
+      error: 'Invalid value: Expected int64 to be <= 9223372036854775807'
+    }),
   uid: z.uuid()
 })
 

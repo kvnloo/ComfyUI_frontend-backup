@@ -17191,7 +17191,7 @@ export type GetFeaturesResponses = {
      */
     'agent-credit-usage-summary'?: 'control' | 'treatment'
     /**
-     * Authenticated assignment for the Agent free-use notice placement experiment. Current Cloud responses include it and default to control when the caller is unauthenticated, evaluation is unavailable, or no treatment is assigned. It remains optional in the client contract, as agent-starter-prompt-set does, so older environments mid-rolling-deploy and partial feature fixtures fail closed rather than decoding an absent field as the empty string, which is not a member of this enum.
+     * Authenticated assignment for the Agent free-use notice placement experiment. Current Cloud responses include it and default to control when the caller is unauthenticated, evaluation is unavailable, or no treatment is assigned. It remains optional in the client contract so older environments mid-rolling-deploy and partial feature fixtures fail closed rather than decoding an absent field as the empty string, which is not a member of this enum.
      */
     'agent-free-use-message-placement'?:
       | 'control'
@@ -17199,10 +17199,6 @@ export type GetFeaturesResponses = {
       | 'near-composer'
       | 'above-input'
       | 'inside-input'
-    /**
-     * Authenticated assignment for the Agent starter-prompt experiment. Current Cloud responses include it and default to control when the caller is unauthenticated, evaluation is unavailable, or no treatment is assigned. It remains optional in the client contract so older environments and partial feature fixtures fail closed. Reading this field does not constitute experiment exposure; the frontend emits the custom exposure event only after rendering the starter prompt surface.
-     */
-    'agent-starter-prompt-set'?: 'control' | 'test'
     /**
      * The signed-in caller's arm in the local agent free-credit experiment (PostHog flag agent-gratis-cents-local-experiment): control or treatment. It answers which arm the caller is in, not whether credit has been granted, and does not depend on the grant being issued.
      * Absent, never null or empty, when no arm is resolved: unauthenticated callers, a failed or unavailable flag evaluation, or no variant assigned yet. It has no default; a consumer treats absence as "no arm known" and shows no free-credit surface, without recording the caller as outside the experiment. Served on this HTTP response only, never in the WebSocket feature_flags push, and dynamic configuration cannot set it.
