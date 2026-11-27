@@ -49,13 +49,32 @@ vi.mock<unknown>(
       handleMouseLeave: vi.fn(),
       setGizmosVisible: vi.fn(),
       setTransformGizmoMode: vi.fn(),
-      setLookThrough: vi.fn()
+      setLookThrough: vi.fn(),
+      showSubjectModel: vi.fn()
     }
     holder.modeRef = modeRef
     holder.api = api
     return { useCameraInfo: () => ({ ...api, mode: modeRef }) }
   }
 )
+
+const subject = vi.hoisted(() => ({
+  modelFile: null as { value: string | undefined } | null
+}))
+
+vi.mock<unknown>(
+  import('@/extensions/core/load3d/cameraInfo/subjectModelFile'),
+  async () => {
+    const { ref } = await import('vue')
+    const modelFile = ref<string>()
+    subject.modelFile = modelFile
+    return { resolveSubjectModelFile: () => modelFile.value }
+  }
+)
+
+function setSubjectModelFile(value: string | undefined) {
+  subject.modelFile!.value = value
+}
 
 vi.mock(import('@vueuse/core'), { spy: true })
 
@@ -175,6 +194,35 @@ describe('CameraInfo toolbar', () => {
     await nextTick()
 
     expect(api().cleanup).toHaveBeenCalledOnce()
+  })
+})
+
+describe('CameraInfo subject model', () => {
+  beforeEach(() => {
+    setMode('orbit')
+    setSubjectModelFile(undefined)
+    Object.values(api()).forEach((fn) => fn.mockClear())
+  })
+
+  it('shows the model file feeding the mesh input on mount', () => {
+    setSubjectModelFile('3d/frog.obj')
+
+    renderComponent()
+
+    expect(api().showSubjectModel).toHaveBeenLastCalledWith('3d/frog.obj')
+  })
+
+  it('follows the model file as it changes and clears', async () => {
+    renderComponent()
+    expect(api().showSubjectModel).toHaveBeenLastCalledWith(undefined)
+
+    setSubjectModelFile('robot.glb')
+    await nextTick()
+    expect(api().showSubjectModel).toHaveBeenLastCalledWith('robot.glb')
+
+    setSubjectModelFile(undefined)
+    await nextTick()
+    expect(api().showSubjectModel).toHaveBeenLastCalledWith(undefined)
   })
 })
 

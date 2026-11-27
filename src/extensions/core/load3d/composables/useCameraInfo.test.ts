@@ -11,6 +11,7 @@ interface ViewportInstance {
   setGizmosVisible: ReturnType<typeof vi.fn>
   setTransformGizmoMode: ReturnType<typeof vi.fn>
   setLookThrough: ReturnType<typeof vi.fn>
+  showSubjectModel: ReturnType<typeof vi.fn>
   remove: ReturnType<typeof vi.fn>
   viewport: {
     updateStatusMouseOnScene: ReturnType<typeof vi.fn>
@@ -28,6 +29,7 @@ const { ViewportMock, instances } = vi.hoisted(() => {
       setGizmosVisible: vi.fn(),
       setTransformGizmoMode: vi.fn(),
       setLookThrough: vi.fn(),
+      showSubjectModel: vi.fn(async () => {}),
       remove: vi.fn(),
       viewport: {
         updateStatusMouseOnScene: vi.fn(),
@@ -233,5 +235,29 @@ describe('useCameraInfo', () => {
 
     expect(instances).toHaveLength(2)
     expect(instances[1].applyState).toHaveBeenCalled()
+  })
+
+  it('shows the model file in the viewport', () => {
+    const camera = useCameraInfo(nodeRef(makeNode({ mode: 'orbit' })))
+    camera.initialize(document.createElement('div'))
+
+    camera.showSubjectModel('3d/frog.obj [output]')
+
+    expect(instances[0].showSubjectModel).toHaveBeenCalledWith(
+      expect.anything(),
+      { rootFolder: 'output', subfolder: '3d', filename: 'frog.obj' }
+    )
+  })
+
+  it('clears the viewport model when there is no model file', () => {
+    const camera = useCameraInfo(nodeRef(makeNode({ mode: 'orbit' })))
+    camera.initialize(document.createElement('div'))
+
+    camera.showSubjectModel(undefined)
+
+    expect(instances[0].showSubjectModel).toHaveBeenCalledWith(
+      expect.anything(),
+      null
+    )
   })
 })

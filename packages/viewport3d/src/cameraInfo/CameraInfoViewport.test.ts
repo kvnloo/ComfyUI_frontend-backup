@@ -9,6 +9,8 @@ vi.mock(import('#/load3d/createViewport3d'), () => ({
   createViewport3d: createViewport3dMock
 }))
 
+import type { Load3dHost } from '#/load3d/interfaces'
+
 import { CameraInfoViewport } from './CameraInfoViewport'
 
 function makeViewportStub() {
@@ -29,9 +31,14 @@ function makeViewportStub() {
   let preRender: (() => void) | null = null
   let postRender: (() => void) | null = null
   return {
-    sceneManager: { scene: new THREE.Scene() },
+    sceneManager: {
+      scene: new THREE.Scene(),
+      gridHelper: new THREE.GridHelper()
+    },
     cameraManager: { activeCamera: new THREE.PerspectiveCamera() },
-    controlsManager: { controls: { enabled: true } },
+    controlsManager: {
+      controls: { enabled: true, target: new THREE.Vector3(), update: vi.fn() }
+    },
     viewHelperManager: { visibleViewHelper: vi.fn() },
     rendererView: {
       setViewport: vi.fn(),
@@ -422,5 +429,131 @@ describe('CameraInfoViewport gizmo drag callbacks', () => {
     expect(stub.controlsManager.controls.enabled).toBe(true)
 
     viewport.remove()
+  })
+})
+
+describe('CameraInfoViewport subject model', () => {
+  const TRIANGLE_STL = `solid triangle
+facet normal 0 0 1
+outer loop
+vertex 0 0 0
+vertex 2 0 0
+vertex 0 2 0
+endloop
+endfacet
+endsolid triangle`
+  const source = { rootFolder: 'input', subfolder: '3d', filename: 'a.stl' }
+
+  let stub: ReturnType<typeof makeViewportStub>
+  let viewport: CameraInfoViewport
+
+  function hostServing(respond: () => Promise<Response>): Load3dHost {
+    return {
+      fetchApi: vi.fn(respond),
+      getPLYEngine: () => 'threejs',
+      resolveImageURL: (path) => path
+    }
+  }
+
+  const servingTriangle = () =>
+    hostServing(async () => new Response(TRIANGLE_STL))
+
+  const subjectModel = () =>
+    stub.sceneManager.scene.getObjectByName('CameraInfoSubjectModel')
+
+  beforeEach(() => {
+    stub = makeViewportStub()
+    createViewport3dMock.mockReturnValue(stub)
+    viewport = new CameraInfoViewport(document.createElement('div'))
+    viewport.overlay.attach(stub.sceneManager.scene)
+  })
+
+  afterEach(() => {
+    viewport.remove()
+  })
+
+  it('shows the loaded model standing on the grid', async () => {
+    await viewport.showSubjectModel(servingTriangle(), source)
+
+    expect(subjectModel()).toBeDefined()
+    expect(stub.sceneManager.gridHelper.position.y).toBeLessThan(0)
+    expect(stub.forceRender).toHaveBeenCalled()
+  })
+
+  it('returns to the reference cube and ground when the source is cleared', async () => {
+    await viewport.showSubjectModel(servingTriangle(), source)
+
+    await viewport.showSubjectModel(servingTriangle(), null)
+
+    expect(subjectModel()).toBeUndefined()
+    expect(stub.sceneManager.gridHelper.position.y).toBe(0)
+  })
+
+  it('fits the orbit rings and the editor view to the model, and back', async () => {
+    const camera = stub.cameraManager.activeCamera
+    camera.position.set(0, 0, 9)
+    const yawHandle = () =>
+      viewport.orbitHandles
+        .pickableMeshes()
+        .find((m) => m.userData.handleType === 'yaw')!
+    const ringRadius = () => yawHandle().position.length()
+    const cubeRingRadius = ringRadius()
+
+    await viewport.showSubjectModel(servingTriangle(), source)
+
+    expect(ringRadius()).toBeCloseTo(cubeRingRadius / Math.sqrt(3))
+    expect(camera.position.z).toBeCloseTo(9 / Math.sqrt(3))
+
+    await viewport.showSubjectModel(servingTriangle(), null)
+
+    expect(ringRadius()).toBeCloseTo(cubeRingRadius)
+    expect(camera.position.z).toBeCloseTo(9)
+  })
+
+  it('leaves hidden gizmos hidden when a model arrives or is cleared', async () => {
+    viewport.setGizmosVisible(false)
+
+    await viewport.showSubjectModel(servingTriangle(), source)
+    expect(viewport.orbitHandles.isVisible()).toBe(false)
+
+    await viewport.showSubjectModel(servingTriangle(), null)
+    expect(viewport.orbitHandles.isVisible()).toBe(false)
+  })
+
+  it('keeps the reference cube when the file cannot be loaded', async () => {
+    const missing = hostServing(async () => new Response('', { status: 404 }))
+
+    await viewport.showSubjectModel(missing, source)
+
+    expect(subjectModel()).toBeUndefined()
+    expect(stub.sceneManager.gridHelper.position.y).toBe(0)
+  })
+
+  it('drops a load that a newer request replaced', async () => {
+    let release: (response: Response) => void = () => {}
+    const slow = hostServing(
+      () => new Promise<Response>((resolve) => (release = resolve))
+    )
+
+    const stale = viewport.showSubjectModel(slow, source)
+    await viewport.showSubjectModel(servingTriangle(), null)
+    release(new Response(TRIANGLE_STL))
+    await stale
+
+    expect(subjectModel()).toBeUndefined()
+  })
+
+  it('drops a load that finishes after the viewport is removed', async () => {
+    let release: (response: Response) => void = () => {}
+    const slow = hostServing(
+      () => new Promise<Response>((resolve) => (release = resolve))
+    )
+
+    const pending = viewport.showSubjectModel(slow, source)
+    viewport.remove()
+    release(new Response(TRIANGLE_STL))
+    await pending
+
+    expect(subjectModel()).toBeUndefined()
   })
 })

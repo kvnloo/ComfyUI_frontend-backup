@@ -149,4 +149,33 @@ describe('OrbitHandles', () => {
     expect(Math.abs(plane.normal.x)).toBeCloseTo(1)
     expect(plane.normal.y).toBeCloseTo(0)
   })
+
+  describe('setScale', () => {
+    const orbit = { yaw: 0, pitch: 0, distance: 5 }
+    const handleOf = (type: string) =>
+      handles.pickableMeshes().find((m) => m.userData.handleType === type)!
+
+    beforeEach(() => {
+      handles.setScale(0.5)
+      handles.update({ ...DEFAULT_CAMERA_INFO_STATE, mode: 'orbit', orbit })
+    })
+
+    it('shrinks the rings and keeps their handles on them', () => {
+      expect(handleOf('yaw').position.z).toBeCloseTo(0.75)
+      expect(handleOf('pitch').position.z).toBeCloseTo(0.75)
+    })
+
+    it('shrinks the handle spheres, hovered or not', () => {
+      expect(handleOf('yaw').scale.x).toBeCloseTo(0.5)
+
+      handles.setHovered('yaw')
+
+      expect(handleOf('yaw').scale.x).toBeGreaterThan(0.5)
+      expect(handleOf('yaw').scale.x).toBeLessThan(1)
+    })
+
+    it('leaves the distance handle at the camera', () => {
+      expect(handleOf('distance').position.z).toBeCloseTo(5)
+    })
+  })
 })

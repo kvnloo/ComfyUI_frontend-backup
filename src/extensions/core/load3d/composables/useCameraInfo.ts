@@ -9,11 +9,13 @@ import { CameraInfoViewport } from '@comfyorg/viewport3d/cameraInfo/CameraInfoVi
 import type { TransformGizmoMode } from '@comfyorg/viewport3d/cameraInfo/CameraInfoViewport'
 import { DEFAULT_CAMERA_INFO_STATE } from '@comfyorg/viewport3d/cameraInfo/types'
 import type { CameraInfoState } from '@comfyorg/viewport3d/cameraInfo/types'
+import { toSubjectModelSource } from '@/extensions/core/load3d/cameraInfo/subjectModelFile'
 import {
   readStateFromWidgets,
   writeWidgetValue
 } from '@/extensions/core/load3d/cameraInfo/widgetBridge'
 import type { NodeWithWidgets } from '@/extensions/core/load3d/cameraInfo/widgetBridge'
+import { load3dHost } from '@/extensions/core/load3d/load3dHost'
 import { t } from '@/i18n'
 import type { LGraphNode } from '@/lib/litegraph/src/LGraphNode'
 import { useToast } from '@/components/ui/toast/toastStore'
@@ -91,6 +93,13 @@ export function useCameraInfo(nodeRef: MaybeRef<LGraphNode | undefined>) {
     viewport?.setLookThrough(on)
   }
 
+  const showSubjectModel = (modelFile: string | undefined): void => {
+    void viewport?.showSubjectModel(
+      load3dHost,
+      modelFile ? toSubjectModelSource(modelFile) : null
+    )
+  }
+
   function wireWidgetsToOverlay(target: NodeWithWidgets): void {
     wiring.wireWidgets(target, WIDGET_NAMES, (widget) => {
       if (widget.name === 'mode') wireWidgetsToOverlay(target)
@@ -109,6 +118,7 @@ export function useCameraInfo(nodeRef: MaybeRef<LGraphNode | undefined>) {
     setGizmosVisible,
     setTransformGizmoMode,
     setLookThrough,
+    showSubjectModel,
     mode
   }
 }
